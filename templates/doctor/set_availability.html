@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Availability</title>
+</head>
+<body>
+
+<h3>Set Availability</h3>
+
+<form method="POST">
+  <label for="date">Select Date:</label>
+  <input type="date" name="date" id="date" required min="{{ today }}">
+
+  <h4>Select Time Slot:</h4>
+  {% for start, label in TIME_SLOTS.items() %}
+      <button type="submit" name="time" value="{{ start }}">{{ label }}</button><br><br>
+  {% endfor %}
+</form>
+
+<hr>
+
+<h4>Existing Slots</h4>
+
+<table border="1" cellpadding="8">
+  <tr>
+    <th>Date</th>
+    <th>Start Time</th>
+    <th>End Time</th>
+    <th>Action</th>
+  </tr>
+  {% for slot in slots %}
+    <tr>
+    <td>{{ slot.date.strftime('%d-%m-%Y') }}</td>
+    <td>{{ slot.start_time.strftime('%H:%m') }}</td>
+    <td>{{ slot.end_time.strftime('%H:%m') }}</td>
+    <td>
+      <a href="{{ url_for('doctor.remove_slot', slot_id=slot.id) }}">Remove</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+</body>
+</html>

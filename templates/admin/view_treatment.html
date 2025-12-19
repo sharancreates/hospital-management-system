@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Treatment</title>
+</head>
+<body>
+    <h1>Treatment Details</h1>
+    {% if doctor and patient %}
+        <h3>Doctor: {{ doctor.doc_name }}</h3>
+        <h3>Patient: {{ patient.pat_name }}</h3>
+        <h3>Date: {{ app.date }}</h3>
+        <h3>Time: {{ app.time }}</h3>
+    {% endif %}
+
+    <table border="1">
+        <tr>
+            <th>Ailment</th>
+            <td>{{ treatment.ailment }}</td>
+        </tr>
+        <tr>
+            <th>Prescription</th>
+            <td>{{ treatment.prescription }}</td>
+        </tr>
+        <tr>
+            <th>Notes</th>
+            <td>{{ treatment.notes }}</td>
+        </tr>
+    </table>
+</body>
+</html>

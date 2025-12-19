@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update {{ doctor.doc_name }}</title>
+  </head>
+
+  <body>
+    <h2>Edit Doctor</h2>
+    <form action="{{ url_for('admin.update_doctor', doctor_id=doctor.doctor_id) }}" method="POST" id="new-doc">
+      
+      <div>
+        <label for="doc-name">Name of the Doctor:</label>
+        <input
+          type="text"
+          id="doc-name"
+          name="doc-name"
+          required
+          value="{{ doctor.doc_name if doctor else '' }}"
+        />
+      </div>
+
+      <div>
+        <label>Gender:</label>
+        <input
+          type="radio"
+          name="gender"
+          id="gfemale"
+          value="female"
+          {% if doctor and doctor.gender == 'female' %}checked{% endif %}
+        />
+        <label for="gfemale">Female</label>
+
+        <input
+          type="radio"
+          name="gender"
+          id="gmale"
+          value="male"
+          {% if doctor and doctor.gender == 'male' %}checked{% endif %}
+        />
+        <label for="gmale">Male</label>
+      </div>
+
+      <div>
+        <label for="contact_num">Contact Number:</label>
+        <input
+          type="text"
+          id="contact_num"
+          name="contact_num"
+          value="{{ doctor.contact_num if doctor else '' }}"
+        />
+      </div>
+
+      <div>
+        <label for="dob">Date of Birth:</label>
+        <input
+          type="date"
+          id="dob"
+          name="dob"
+          required
+          value="{{ doctor.dob if doctor else '' }}"
+        />
+      </div>
+
+      <div>
+        <label for="specialization">Specialization:</label>
+        <select id="specialization" name="specialization" required>
+          <option selected disabled value="">Select Department</option>
+          {% for dept in department %}
+            <option value="{{ dept.department_id }}"
+              {% if doctor and doctor.department_id == dept.department_id %}selected{% endif %}>
+              {{ dept.department_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+
+    </form>
+  </body>
+</html>

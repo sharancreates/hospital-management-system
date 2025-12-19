@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+</head>
+<body>
+    <h1>Hello {{patient.pat_name}}</h1>
+    <a href="{{ url_for('patient.update_patient', patient_id = patient.patient_id)}}">Update Profile</a>
+    <h3>Doctors available</h3>
+    <table border="2px">
+        <tr>
+            <th>Doctor</th>
+            <th>Specialisation</th>
+        </tr>
+        {%for doc in docs%}
+        <tr>
+            <td><a href="{{url_for('patient.doc_profile', doctor_id=doc.doctor_id)}}">{{doc.doc_name}}</a></td>
+            <td>{{doc.department.department_name}}</td>
+            <td><a href="{{url_for('patient.add_appointment', doctor_id=doc.doctor_id)}}">Add Appointment</a></td>
+        </tr>
+        {%endfor%}
+    </table>
+
+    <h3>Specialisations available</h3>
+    <table border="2px">
+        <tr>
+            <th>Specialisation</th>
+        </tr>
+        {%for dept in department%}
+        <tr>
+            <td>{{dept.department_name}}</td>
+        </tr>
+        {%endfor%}
+    </table>
+
+    <h2>Appointments</h2>
+    <table border="1px">
+        <tr>
+            <th>ID</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+        </tr>
+        {%for app in appointment%}
+        <tr>
+            <td>{{app.appointment_id}}</td>
+            <td>{{app.doctor.doc_name}}</td>
+            <td>{{app.date}}</td>
+            <td>{{app.time}}</td>
+            <td>{{app.status}}</td>
+            <td>
+                {% if app.status == 'booked' or app.status == 'Booked' %}
+                <a href="{{ url_for('patient.cancel_appointment', appointment_id=app.appointment_id) }}" 
+                class="btn btn-sm btn-danger"
+                onclick="return confirm('Are you sure you want to cancel this appointment?');">
+                Cancel Appointment
+                </a>
+                {% else %}
+                &mdash;
+                {% endif %}
+            </td>
+            <td>
+                {%if app.status=="Completed" and app.treatment%}
+                <a href="{{url_for('patient.view_treatment', treatment_id = app.treatment.treatment_id)}}">Treatment</a>
+                {% elif app.status == "Completed" %}
+                <span class="text-muted">No treatment record</span>
+                {% endif %}
+            </td>
+        </tr>
+        {%endfor%}
+    </table>
+
+    <h7><a href="{{url_for('patient.add_appointment')}}">add appointment</a></h7>
+
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('auth.logout') }}">Logout</a>
+    {% endif %}
+</body>
+</html> 

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add New Appointment</title>
+  </head>
+  <body>
+    <div>
+      <h2>Add a new Appointment</h2>
+    <form
+      action="{{ url_for('admin.set_appointment') }}"
+      method="POST"
+      id="new-app"
+    >
+      <div>
+        <label for="pat">Select Patient</label>
+        <select id="pat" name="pat" required>
+          <option value="" >-- Select Patient --</option>
+          {% for pat in patients %}
+          <option value="{{ pat.patient_id }}" name="pat">{{ pat.pat_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="doc" >Select Doctor</label>
+        <select id="doc" name="doc" required>
+          <option value="">-- Select Doctor --</option>
+          {% for doc in doctors %}
+          <option value="{{ doc.doctor_id }}" name="doc">{{ doc.doc_name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required />
+      </div>
+      <div>
+        <label for="time" >Time:</label>
+        <input type="time" id="time" name="time" required />
+      </div>
+      <!-- <div class="mb-3">
+        <label for="status" class="form-label">Select Doctor</label>
+        <select class="form-select" id="status" name="status" required>
+          <option value="">-- Status --</option>
+          <option value="booked" name="doc">Booked</option>
+          <option value="completed" name="doc">Completed</option>
+          <option value="cancelled" name="doc">Cancelled</option>
+        </select>
+      </div> -->
+      <button type="submit">Submit</button>
+    </form>
+    </div>
+  </body>
+</html>

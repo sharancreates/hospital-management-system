@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Portal</title>
+</head>
+
+<body>
+    <nav>
+        <h2>Hospital Portal</h2>
+    </nav>
+
+    <div>
+        <h1>Welcome to the Hospital Management System</h1>
+        <p>Manage patients, doctors, and administrative tasks seamlessly.</p>
+
+        <div>
+            <a href="{{ url_for('patient.register') }}">Patient Registration</a>
+            <br>
+            <a href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a>
+            <br>
+            <a href="{{ url_for('doctor.doctor_dashboard') }}">Patient/Doctor Login</a>
+        </div>
+    </div>
+</body>
+</html>

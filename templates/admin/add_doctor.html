@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add A Doctor</title>
+  </head>
+  <body>
+    <div>
+      <h2>Add Doctor</h2>
+      <form action="{{ url_for('admin.add_doctor') }}" method="POST" id="new-doc">
+        <div>
+          <label for="doc-name" name="doc-name">Name of the Doctor:</label>
+          <input type="text" id="doc-name" name="doc-name" required />
+        </div>
+
+        <div>
+          <input type="radio" name="gender" id="gfemale" value="female" />
+          <label for="gfemale">Female</label>
+
+          <input type="radio" name="gender" id="gmale" value="male" />
+          <label for="gmale">Male</label>
+        </div>
+
+        <div>
+          <label for="contact_num">Contact Number:</label>
+          <input type="text" id="contact_num" name="contact_num" />
+        </div>
+
+        <div>
+          <label for="dob">Date of Birth:</label>
+          <input type="date" id="dob" name="dob" required />
+        </div>
+
+        <div>
+          <label for="specialization">Specialization:</label>
+          <select id="specialization" name="specialization" required>
+            <option selected disabled value="">Select Department</option>
+            {% for dept in department %}
+              <option value="{{ dept.department_id }}"
+                {% if doctor and doctor.department_id == dept.department_id %}selected{% endif %}>
+                {{ dept.department_name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

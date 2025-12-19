@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Appointment</title>
+</head>
+<body>
+    <h2>Book Appointment</h2>
+    <form action="{{ url_for('patient.add_appointment') }}" method="POST">
+        <div>
+            <label>Select Doctor</label>
+            <select name="doc" required>
+                <option value="">-- Select Doctor --</option>
+                {% for d in doctors %}
+                <option value="{{ d.doctor_id }}">{{ d.doc_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Select Date</label>
+            <input type="date" name="date" required>
+        </div>
+
+        {% if available_slots is none %}
+            <button type="submit">Check Available Slots</button>
+        {% endif %}
+
+        {% if available_slots is not none and available_slots|length == 0 %}
+            <p>No available slots for this doctor on the selected date.</p>
+            <button type="submit">Check Again</button>
+        {% endif %}
+
+        {% if available_slots and available_slots|length > 0 %}
+        <div>
+            <label>Available Time Slots</label>
+            <select name="slot" required>
+                <option value="">-- Select Slot --</option>
+                {% for s in available_slots %}
+                <option value="{{ s.id }}">
+                    {{ s.start_time.strftime('%I:%M %p') }} - {{ s.end_time.strftime('%I:%M %p') }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Book Appointment</button>
+        {% endif %}
+    </form>
+</body>
+</html>

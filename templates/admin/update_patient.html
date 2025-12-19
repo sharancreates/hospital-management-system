@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Patient</title>
+  </head>
+  <body>
+    <h2>Update Patient</h2>
+    <form action="{{ url_for('admin.update_patient', patient_id=patient.patient_id) }}" method="POST" id="update_pat">
+      
+      <div>
+        <label for="pat_name">Name of the Patient:</label>
+        <input
+          type="text"
+          id="pat_name"
+          name="pat_name"
+          required
+          value="{{ patient.pat_name }}"
+        />
+      </div>
+
+      <div>
+        <label>Gender:</label>
+        <input
+          type="radio"
+          name="gender"
+          id="gfemale"
+          value="female"
+          {% if patient and patient.gender == 'female' %}checked{% endif %}
+        />
+        <label for="gfemale">Female</label>
+
+        <input
+          type="radio"
+          name="gender"
+          id="gmale"
+          value="male"
+          {% if patient and patient.gender == 'male' %}checked{% endif %}
+        />
+        <label for="gmale">Male</label>
+      </div>
+
+      <div>
+        <label for="contact_num">Contact Number:</label>
+        <input
+          type="text"
+          id="contact_num"
+          name="contact_num"
+          value="{{ patient.contact_num }}"
+        />
+      </div>
+
+      <div>
+        <label for="dob">Date of Birth:</label>
+        <input
+          type="date"
+          id="dob"
+          name="dob"
+          required
+          value="{{ patient.date }}"
+        />
+      </div>
+
+      <div>
+        <label for="age">Age:</label>
+        <input
+          type="text"
+          id="age"
+          name="age"
+          required
+          value="{{ patient.age }}"
+        />
+      </div>
+
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+
+    </form>
+  </body>
+</html>

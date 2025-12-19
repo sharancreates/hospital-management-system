@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Patient Profile</title>
+  </head>
+
+  <body>
+    <h2>Edit Profile</h2>
+    <form action="{{ url_for('patient.update_patient', patient_id=patient.patient_id) }}" method="POST" id="update-patient">
+      
+      <div>
+        <label for="pat-name">Name of the patient:</label>
+        <input
+          type="text"
+          id="pat-name"
+          name="pat-name"
+          required
+          value="{{ patient.pat_name if patient else '' }}"
+        />
+      </div>
+
+      <div>
+        <label>Gender:</label>
+        <input
+          type="radio"
+          name="gender"
+          id="gfemale"
+          value="female"
+          {% if patient and patient.gender == 'female' %}checked{% endif %}
+        />
+        <label for="gfemale">Female</label>
+
+        <input
+          type="radio"
+          name="gender"
+          id="gmale"
+          value="male"
+          {% if patient and patient.gender == 'male' %}checked{% endif %}
+        />
+        <label for="gmale">Male</label>
+      </div>
+
+      <div>
+        <label for="contact_num">Contact Number:</label>
+        <input
+          type="text"
+          id="contact_num"
+          name="contact_num"
+          value="{{ patient.contact_num if patient else '' }}"
+        />
+      </div>
+
+      <div>
+        <label for="dob">Date of Birth:</label>
+        <input
+          type="date"
+          id="dob"
+          name="dob"
+          required
+          value="{{ patient.dob if patient else '' }}"
+        />
+      </div>
+
+      <div>
+        <label for="age">Age:</label>
+        <input
+          type="text"
+          id="age"
+          name="age"
+          required
+          value="{{ patient.age if patient else '' }}"
+        />
+      </div>
+
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+
+    </form>
+  </body>
+</html>

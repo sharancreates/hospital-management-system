@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add A Patient</title>
+  </head>
+  <body>
+    <h2>Add A Patient</h2>
+    <form action="{{ url_for('patient.register') }}" method="POST" id="new_pat">
+      
+      <div>
+        <label for="email">Email:</label>
+        <input
+          type="text"
+          id="email"
+          name="email"
+          required
+        />
+      </div>
+
+      <div>
+        <label for="password">Password:</label>
+        <input
+          type="text"
+          id="password"
+          name="password"
+          required
+        />
+      </div>
+
+      <div>
+        <label for="pat_name">Name of the Patient:</label>
+        <input
+          type="text"
+          id="pat_name"
+          name="pat_name"
+          required
+        />
+      </div>
+
+      <div>
+        <label>Gender:</label>
+        <input
+          type="radio"
+          name="gender"
+          id="gfemale"
+          value="female"
+        />
+        <label for="gfemale">Female</label>
+
+        <input
+          type="radio"
+          name="gender"
+          id="gmale"
+          value="male"
+        />
+        <label for="gmale">Male</label>
+      </div>
+
+      <div>
+        <label for="contact_num">Contact Number:</label>
+        <input
+          type="text"
+          id="contact_num"
+          name="contact_num"
+        />
+      </div>
+
+      <div>
+        <label for="dob">Date of Birth:</label>
+        <input
+          type="date"
+          id="dob"
+          name="dob"
+          required
+        />
+      </div>
+
+      <div>
+        <label for="age">Age:</label>
+        <input
+          type="text"
+          id="age"
+          name="age"
+          required
+        />
+      </div>
+
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+
+    </form>
+  </body>
+</html>

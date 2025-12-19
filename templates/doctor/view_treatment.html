@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treatment Details</title>
+</head>
+<body>
+    <h1>Treatment Details</h1>
+    <h3>Doctor : {{doctor.doc_name}}</h3>
+    <h3>Patient : {{patient.pat_name}}</h3>
+    <h3>Date : {{app.date}}</h3>
+    <h3>Time : {{app.time}}</h3>
+    <table>
+        <tr>
+            <th>Ailment</th>
+            <th>Prescription</th>
+            <th>Notes</th>
+        </tr>
+        {%for tm in treatment%}
+        <tr>
+            <td>{{tm.ailment}}</td>
+            <td>{{tm.prescription}}</td>
+            <td>{{tm.notes}}</td>
+        </tr>
+        {%endfor%}
+    </table>
+</body>
+</html>

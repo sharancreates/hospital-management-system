@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arogya - {{ doctor.doc_name }}</title>
+</head>
+<body>
+    <h1>Welcome {{ doctor.doc_name }}</h1>
+
+    <h3>Appointments :</h3>
+    <table border="1">
+        <tr>
+            <th>Appointment ID</th>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for app in appointments %}
+            <tr>
+                <td>{{ app.appointment_id }}</td>
+                <td><a href="{{ url_for('doctor.patient_history', patient_id=app.patient.patient_id) }}">{{ app.patient.pat_name }}</a></td>
+                <td>{{ app.date.strftime('%d-%m-%Y') }}</td>
+                <td>{{ app.time.strftime('%H-%m') }}</td>
+                <td>{{ app.status }}</td>
+                {% if app.status == 'Completed' %}
+                <td><a href="{{ url_for('doctor.view_treatment', appointment_id=app.appointment_id) }}">Treatment Details</a></td>
+                {% else %}
+                <td><a href="{{ url_for('doctor.add_treatment', appointment_id=app.appointment_id) }}">Add Treatment</a></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Patient list: </h3>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Date of Birth</th>
+            <th>Age</th>
+            <th>Contact Number</th>
+        </tr>
+        {% for pats in pats %}
+        <tr>
+            <td>{{ pats.patient_id }}</td>
+            <td>{{ pats.pat_name }}</td>
+            <td>{{ pats.gender }}</td>
+            <td>{{ pats.dob }}</td>
+            <td>{{ pats.age }}</td>
+            <td>{{ pats.contact_num }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div>
+        <h3><a href="{{ url_for('doctor.set_availability', doctor_id=doctor.doctor_id) }}">Availability</a></h3>
+    </div>
+
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
+    {% endif %}
+</body>
+</html>

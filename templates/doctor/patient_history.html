@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient History</title>
+</head>
+<body>
+    <h3>{{patient.pat_name}}</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Treatment</th>
+        </tr>
+         {% for app in appointment %}
+        <tr>
+            <td>{{ app.appointment_id }}</td>
+            <td>{{ app.doctor.doc_name}}</td>
+            <td>{{ app.date.strftime('%d-%m-%Y') }}</td>
+            <td>{{ app.time.strftime('%H:%M') }}</td>
+            <td>{{ app.status }}</td>
+            <td><a href="{{url_for('doctor.view_treatment', appointment_id = app.appointment_id)}}">Treatment Details</a></td>
+        </tr>
+        {%endfor%}
+    </table>
+</body>
+</html>

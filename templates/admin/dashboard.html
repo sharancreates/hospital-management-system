@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arogya - Admin Dashboard</title>
+</head>
+
+<body>
+
+<h1>Welcome Admin!</h1>
+
+<h3>Doctor Profiles</h3>
+
+<form action="{{ url_for('admin.searchdocs') }}" method="get">
+    <input type="search" name="q" placeholder="Search by name or ID" value="{{ query or '' }}">
+    <button type="submit">Search</button>
+</form>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Specialization</th>
+        <th>Contact</th>
+        <th>Actions</th>
+    </tr>
+
+    {% set doctor_list = doctor_results if doctor_results is not none else docs %}
+
+    {% for doctor in doctor_list %}
+    <tr>
+        <td>{{ doctor.doctor_id }}</td>
+        <td>{{ doctor.doc_name }}</td>
+        <td>{{ doctor.department.department_name }}</td>
+        <td>{{ doctor.contact_num }}</td>
+        <td>
+            <a href="{{ url_for('admin.update_doctor', doctor_id=doctor.doctor_id) }}">Update</a>
+            <a href="{{ url_for('admin.delete_doctor', doctor_id=doctor.doctor_id) }}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{{ url_for('admin.add_doctor') }}">Add Doctor</a>
+
+<h3>Patient Profiles</h3>
+
+<form action="{{ url_for('admin.searchpats') }}" method="get">
+    <input type="search" name="p" placeholder="Search by name or ID" value="{{ query or '' }}">
+    <button type="submit">Search</button>
+</form>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Gender</th>
+        <th>DOB</th>
+        <th>Age</th>
+        <th>Contact</th>
+        <th>Actions</th>
+    </tr>
+
+    {% set patient_list = patient_results if patient_results is not none else pats %}
+
+    {% for p in patient_list %}
+    <tr>
+        <td>{{ p.patient_id }}</td>
+        <td>{{ p.pat_name }}</td>
+        <td>{{ p.gender }}</td>
+        <td>{{ p.dob }}</td>
+        <td>{{ p.age }}</td>
+        <td>{{ p.contact_num }}</td>
+        <td>
+            <a href="{{ url_for('admin.update_patient', patient_id=p.patient_id) }}">Update</a>
+            <a href="{{ url_for('admin.delete_patient', patient_id=p.patient_id) }}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+<!-- ------------------- APPOINTMENTS SECTION ------------------- -->
+<h3>Appointments</h3>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Patient</th>
+        <th>Doctor</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Complete</th>
+        <th>Cancel</th>
+        <th>Treatment</th>
+    </tr>
+
+    {% for app in appointments %}
+    <tr>
+        <td>{{ app.appointment_id }}</td>
+        <td>{{ app.patient.pat_name }}</td>
+        <td>{{ app.doctor.doc_name }}</td>
+        <td>{{ app.date }}</td>
+        <td>{{ app.time }}</td>
+        <td>{{ app.status }}</td>
+
+        <td>
+            {% if app.status == 'Booked' %}
+            <form method="POST" action="{{ url_for('admin.complete_appointment', appointment_id=app.appointment_id) }}">
+                <button type="submit">Complete</button>
+            </form>
+            {% else %}
+            -
+            {% endif %}
+        </td>
+
+        <td>
+            {% if app.status == 'Booked' %}
+            <a href="{{ url_for('admin.cancel_appointment', appointment_id=app.appointment_id) }}" onclick="return confirm('Cancel appointment?');">Cancel</a>
+            {% else %}
+            -
+            {% endif %}
+        </td>
+
+        <td>
+            {% if app.status == 'Completed' and app.treatment %}
+            <a href="{{ url_for('admin.view_treatment', treatment_id=app.treatment.treatment_id) }}">View</a>
+            {% elif app.status == 'Completed' %}
+            No record
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{{ url_for('admin.set_appointment') }}">Set Appointment</a>
+
+{% if current_user.is_authenticated %}
+<br><br>
+<a href="{{ url_for('auth.logout') }}">Logout</a>
+{% endif %}
+
+</body>
+</html>

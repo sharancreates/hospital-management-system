@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treatment</title>
+</head>
+<body>
+    <h1>Treatment</h1>
+    <h3>Doctor : {{doctor.doc_name}}</h3>
+    <h3>Patient : {{patient.pat_name}}</h3>
+    <h3>Date : {{app.date}}</h3>
+    <h3>Time : {{app.time}}</h3>
+    <form action="{{url_for('doctor.add_treatment', appointment_id = app.appointment_id)}}" method="POST">
+        <label for="ailment" name="ailment">Ailment</label>
+        <input name="ailment" type="text" class="ailment" id="ailment" required/>
+        <br>
+        <label for="prescription" name="prescription">Prescription</label>
+        <input name="prescription" type="text" class="prescription" id="prescription" required/>
+        <br>
+        <label for="notes" name="">Notes</label>
+        <input name="notes" type="text" class="notes" id="notes" required/>
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</body>
+</html>
