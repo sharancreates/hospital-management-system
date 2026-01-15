@@ -1,28 +1,38 @@
 /* Global Design System */
 :root {
     /* Colors */
-    --primary-color: #0ea5e9; /* Sky 500 */
-    --primary-hover: #0284c7; /* Sky 600 */
-    --secondary-color: #64748b; /* Slate 500 */
-    --success-color: #10b981; /* Emerald 500 */
-    --warning-color: #f59e0b; /* Amber 500 */
-    --danger-color: #ef4444; /* Red 500 */
-    --background-color: #f8fafc; /* Slate 50 */
+    --primary-color: #0ea5e9;
+    /* Sky 500 */
+    --primary-hover: #0284c7;
+    /* Sky 600 */
+    --secondary-color: #64748b;
+    /* Slate 500 */
+    --success-color: #10b981;
+    /* Emerald 500 */
+    --warning-color: #f59e0b;
+    /* Amber 500 */
+    --danger-color: #ef4444;
+    /* Red 500 */
+    --background-color: #f8fafc;
+    /* Slate 50 */
     --card-bg: #ffffff;
-    --text-main: #0f172a; /* Slate 900 */
-    --text-muted: #64748b; /* Slate 500 */
-    --border-color: #e2e8f0; /* Slate 200 */
+    --text-main: #0f172a;
+    /* Slate 900 */
+    --text-muted: #64748b;
+    /* Slate 500 */
+    --border-color: #e2e8f0;
+    /* Slate 200 */
 
     /* Typography */
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    
+
     /* Spacing */
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
     --spacing-lg: 1.5rem;
     --spacing-xl: 2rem;
-    
+
     /* Effects */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -57,16 +67,29 @@ a:hover {
     color: var(--primary-hover);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-weight: 600;
     line-height: 1.25;
     margin-bottom: var(--spacing-md);
     color: var(--text-main);
 }
 
-h1 { font-size: 2.25rem; }
-h2 { font-size: 1.875rem; }
-h3 { font-size: 1.5rem; }
+h1 {
+    font-size: 2.25rem;
+}
+
+h2 {
+    font-size: 1.875rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
 
 /* Utilities */
 .container {
@@ -75,6 +98,7 @@ h3 { font-size: 1.5rem; }
     padding: 0 var(--spacing-md);
 }
 
+/* Card Component */
 .card {
     background: var(--card-bg);
     border-radius: var(--radius-lg);
@@ -140,7 +164,8 @@ h3 { font-size: 1.5rem; }
     color: var(--text-main);
 }
 
-.form-input, .form-select {
+.form-input,
+.form-select {
     width: 100%;
     padding: 0.5rem 0.75rem;
     border: 1px solid var(--border-color);
@@ -150,7 +175,8 @@ h3 { font-size: 1.5rem; }
     font-size: 0.95rem;
 }
 
-.form-input:focus, .form-select:focus {
+.form-input:focus,
+.form-select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);

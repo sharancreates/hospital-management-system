@@ -100,7 +100,6 @@ def view_treatment(treatment_id):
     )
 
 MAX_APPOINTMENTS_PER_SLOT = 10
-count = 0
 
 @patient_bp.route("/add_appointment", methods=["GET", "POST"])
 @login_required
