@@ -55,6 +55,7 @@ class Appointment(db.Model):
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.doctor_id'), nullable = False)
     date = db.Column(db.Date)
     time = db.Column(db.Time)
+    token_number = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(80), nullable = False)
 
     doctor = db.relationship('Doctor', back_populates='appointments')

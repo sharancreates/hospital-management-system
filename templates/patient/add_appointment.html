@@ -1,41 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add Appointment</title>
-</head>
-<body>
-    <h2>Book Appointment</h2>
+{% extends "patient/patient_base.html" %}
+
+{% block title %}Book Appointment - Arogya{% endblock %}
+
+{% block patient_content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div class="section-header">
+        <h2>Book Appointment</h2>
+    </div>
+
     <form action="{{ url_for('patient.add_appointment') }}" method="POST">
-        <div>
-            <label>Select Doctor</label>
-            <select name="doc" required>
-                <option value="">-- Select Doctor --</option>
+        <div class="form-group">
+            <label class="form-label">Select Doctor</label>
+            <select name="doc" class="form-select" required>
+                <option value="" selected disabled>-- Select Doctor --</option>
                 {% for d in doctors %}
-                <option value="{{ d.doctor_id }}">{{ d.doc_name }}</option>
+                <option value="{{ d.doctor_id }}">{{ d.doc_name }} ({{ d.department.department_name }})</option>
                 {% endfor %}
             </select>
         </div>
 
-        <div>
-            <label>Select Date</label>
-            <input type="date" name="date" required>
+        <div class="form-group">
+            <label class="form-label">Select Date</label>
+            <input type="date" name="date" class="form-input" required min="{{ today }}">
         </div>
 
         {% if available_slots is none %}
-            <button type="submit">Check Available Slots</button>
+        <button type="submit" class="btn btn-secondary" style="width: 100%;">Check Available Slots</button>
         {% endif %}
 
         {% if available_slots is not none and available_slots|length == 0 %}
-            <p>No available slots for this doctor on the selected date.</p>
-            <button type="submit">Check Again</button>
+        <div class="alert alert-error" style="margin: 1rem 0;">
+            No available slots for this doctor on the selected date.
+        </div>
+        <button type="submit" class="btn btn-secondary" style="width: 100%;">Check Again</button>
         {% endif %}
 
         {% if available_slots and available_slots|length > 0 %}
-        <div>
-            <label>Available Time Slots</label>
-            <select name="slot" required>
-                <option value="">-- Select Slot --</option>
+        <div class="form-group">
+            <label class="form-label">Available Time Slots</label>
+            <select name="slot" class="form-select" required>
+                <option value="" selected disabled>-- Select Slot --</option>
                 {% for s in available_slots %}
                 <option value="{{ s.id }}">
                     {{ s.start_time.strftime('%I:%M %p') }} - {{ s.end_time.strftime('%I:%M %p') }}
@@ -43,8 +47,8 @@
                 {% endfor %}
             </select>
         </div>
-        <button type="submit">Book Appointment</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Book Appointment</button>
         {% endif %}
     </form>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/patient/patient.css') }}">
+{% block page_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div class="patient-layout">
+    <aside class="patient-sidebar">
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('patient.patient_dashboard') }}"
+                class="nav-item {% if request.endpoint == 'patient.patient_dashboard' %}active{% endif %}">
+                Dashboard
+            </a>
+            <a href="{{ url_for('patient.add_appointment') }}"
+                class="nav-item {% if request.endpoint == 'patient.add_appointment' %}active{% endif %}">
+                Book Appointment
+            </a>
+            {% if patient %}
+            <a href="{{ url_for('patient.update_patient', patient_id=patient.patient_id) }}"
+                class="nav-item {% if request.endpoint == 'patient.update_patient' %}active{% endif %}">
+                My Profile
+            </a>
+            {% endif %}
+        </nav>
+    </aside>
+
+    <main class="patient-content">
+        {% block patient_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

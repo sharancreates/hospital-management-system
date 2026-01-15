@@ -1,29 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treatment Details</title>
-</head>
-<body>
-    <h1>Treatment Details</h1>
-    <h3>Doctor : {{doctor.doc_name}}</h3>
-    <h3>Patient : {{patient.pat_name}}</h3>
-    <h3>Date : {{app.date}}</h3>
-    <h3>Time : {{app.time}}</h3>
-    <table>
-        <tr>
-            <th>Ailment</th>
-            <th>Prescription</th>
-            <th>Notes</th>
-        </tr>
-        {%for tm in treatment%}
-        <tr>
-            <td>{{tm.ailment}}</td>
-            <td>{{tm.prescription}}</td>
-            <td>{{tm.notes}}</td>
-        </tr>
-        {%endfor%}
-    </table>
-</body>
-</html>
+{% extends "doctor/doctor_base.html" %}
+
+{% block title %}View Treatment - Arogya{% endblock %}
+
+{% block doctor_content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div class="section-header">
+        <h2>Treatment Details</h2>
+        <a href="{{ url_for('doctor.doctor_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <div
+        style="background-color: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 2rem; border: 1px solid var(--border-color);">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div>
+                <span style="color: var(--text-muted); font-size: 0.875rem;">Patient</span>
+                <p style="font-weight: 600;">{{ patient.pat_name }}</p>
+            </div>
+            <div>
+                <span style="color: var(--text-muted); font-size: 0.875rem;">Date</span>
+                <p style="font-weight: 600;">{{ app.date }}</p>
+            </div>
+            <div>
+                <span style="color: var(--text-muted); font-size: 0.875rem;">Time</span>
+                <p style="font-weight: 600;">{{ app.time }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ailment</th>
+                    <th>Prescription</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tm in treatment %}
+                <tr>
+                    <td>{{ tm.ailment }}</td>
+                    <td>{{ tm.prescription }}</td>
+                    <td>{{ tm.notes }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" style="text-align: center; color: var(--text-muted);">No treatment details found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

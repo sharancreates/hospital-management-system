@@ -1,54 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add A Doctor</title>
-  </head>
-  <body>
-    <div>
-      <h2>Add Doctor</h2>
-      <form action="{{ url_for('admin.add_doctor') }}" method="POST" id="new-doc">
-        <div>
-          <label for="doc-name" name="doc-name">Name of the Doctor:</label>
-          <input type="text" id="doc-name" name="doc-name" required />
-        </div>
+{% extends "admin/admin_base.html" %}
 
-        <div>
-          <input type="radio" name="gender" id="gfemale" value="female" />
-          <label for="gfemale">Female</label>
+{% block title %}Add Doctor - Arogya{% endblock %}
 
-          <input type="radio" name="gender" id="gmale" value="male" />
-          <label for="gmale">Male</label>
-        </div>
+{% block admin_content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+  <div class="section-header">
+    <h2>Add New Doctor</h2>
+  </div>
 
-        <div>
-          <label for="contact_num">Contact Number:</label>
-          <input type="text" id="contact_num" name="contact_num" />
-        </div>
+  <form action="{{ url_for('admin.add_doctor') }}" method="POST" id="new-doc">
 
-        <div>
-          <label for="dob">Date of Birth:</label>
-          <input type="date" id="dob" name="dob" required />
-        </div>
-
-        <div>
-          <label for="specialization">Specialization:</label>
-          <select id="specialization" name="specialization" required>
-            <option selected disabled value="">Select Department</option>
-            {% for dept in department %}
-              <option value="{{ dept.department_id }}"
-                {% if doctor and doctor.department_id == dept.department_id %}selected{% endif %}>
-                {{ dept.department_name }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <div>
-          <button type="submit">Submit</button>
-        </div>
-      </form>
+    <div class="form-group">
+      <label for="doc-name" class="form-label">Name of the Doctor</label>
+      <input type="text" id="doc-name" name="doc-name" class="form-input" required placeholder="Dr. Name">
     </div>
-  </body>
-</html>
+
+    <div class="form-group">
+      <label class="form-label">Gender</label>
+      <div style="display: flex; gap: 1rem;">
+        <label style="display: flex; gap: 0.5rem; align-items: center;">
+          <input type="radio" name="gender" id="gfemale" value="female">
+          <span>Female</span>
+        </label>
+        <label style="display: flex; gap: 0.5rem; align-items: center;">
+          <input type="radio" name="gender" id="gmale" value="male">
+          <span>Male</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="contact_num" class="form-label">Contact Number</label>
+      <input type="tel" id="contact_num" name="contact_num" class="form-input" placeholder="+1 234 567 8900">
+    </div>
+
+    <div class="form-group">
+      <label for="dob" class="form-label">Date of Birth</label>
+      <input type="date" id="dob" name="dob" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="specialization" class="form-label">Specialization</label>
+      <select id="specialization" name="specialization" class="form-select" required>
+        <option selected disabled value="">Select Department</option>
+        {% for dept in department %}
+        <option value="{{ dept.department_id }}">
+          {{ dept.department_name }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width: 100%;">Add Doctor</button>
+  </form>
+</div>
+{% endblock %}

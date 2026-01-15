@@ -1,55 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add New Appointment</title>
-  </head>
-  <body>
-    <div>
-      <h2>Add a new Appointment</h2>
-    <form
-      action="{{ url_for('admin.set_appointment') }}"
-      method="POST"
-      id="new-app"
-    >
-      <div>
-        <label for="pat">Select Patient</label>
-        <select id="pat" name="pat" required>
-          <option value="" >-- Select Patient --</option>
-          {% for pat in patients %}
-          <option value="{{ pat.patient_id }}" name="pat">{{ pat.pat_name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div>
-        <label for="doc" >Select Doctor</label>
-        <select id="doc" name="doc" required>
-          <option value="">-- Select Doctor --</option>
-          {% for doc in doctors %}
-          <option value="{{ doc.doctor_id }}" name="doc">{{ doc.doc_name}}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div>
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required />
-      </div>
-      <div>
-        <label for="time" >Time:</label>
-        <input type="time" id="time" name="time" required />
-      </div>
-      <!-- <div class="mb-3">
-        <label for="status" class="form-label">Select Doctor</label>
-        <select class="form-select" id="status" name="status" required>
-          <option value="">-- Status --</option>
-          <option value="booked" name="doc">Booked</option>
-          <option value="completed" name="doc">Completed</option>
-          <option value="cancelled" name="doc">Cancelled</option>
-        </select>
-      </div> -->
-      <button type="submit">Submit</button>
-    </form>
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Add Appointment - Arogya{% endblock %}
+
+{% block admin_content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+  <div class="section-header">
+    <h2>Add New Appointment</h2>
+  </div>
+
+  <form action="{{ url_for('admin.set_appointment') }}" method="POST" id="new-app">
+
+    <div class="form-group">
+      <label for="pat" class="form-label">Select Patient</label>
+      <select id="pat" name="pat" class="form-select" required>
+        <option value="" selected disabled>-- Select Patient --</option>
+        {% for pat in patients %}
+        <option value="{{ pat.patient_id }}">{{ pat.pat_name }}</option>
+        {% endfor %}
+      </select>
     </div>
-  </body>
-</html>
+
+    <div class="form-group">
+      <label for="doc" class="form-label">Select Doctor</label>
+      <select id="doc" name="doc" class="form-select" required>
+        <option value="" selected disabled>-- Select Doctor --</option>
+        {% for doc in doctors %}
+        <option value="{{ doc.doctor_id }}">{{ doc.doc_name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="date" class="form-label">Date</label>
+      <input type="date" id="date" name="date" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="time" class="form-label">Time</label>
+      <input type="time" id="time" name="time" class="form-input" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width: 100%;">Create Appointment</button>
+  </form>
+</div>
+{% endblock %}

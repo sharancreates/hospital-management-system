@@ -1,96 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add A Patient</title>
-  </head>
-  <body>
-    <h2>Add A Patient</h2>
+{% extends "base.html" %}
+
+{% block title %}Register - Arogya{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/patient/register.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+  <div class="card">
+    <div class="register-header">
+      <h2>Patient Registration</h2>
+      <p style="color: var(--text-muted);">Join Arogya today for better healthcare.</p>
+    </div>
+
     <form action="{{ url_for('patient.register') }}" method="POST" id="new_pat">
-      
-      <div>
-        <label for="email">Email:</label>
-        <input
-          type="text"
-          id="email"
-          name="email"
-          required
-        />
+
+      <div class="form-group">
+        <label for="pat_name" class="form-label">Full Name</label>
+        <input type="text" id="pat_name" name="pat_name" class="form-input" required placeholder="John Doe">
       </div>
 
-      <div>
-        <label for="password">Password:</label>
-        <input
-          type="text"
-          id="password"
-          name="password"
-          required
-        />
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" id="email" name="email" class="form-input" required placeholder="john@example.com">
       </div>
 
-      <div>
-        <label for="pat_name">Name of the Patient:</label>
-        <input
-          type="text"
-          id="pat_name"
-          name="pat_name"
-          required
-        />
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" name="password" class="form-input" required
+          placeholder="Choose a secure password">
       </div>
 
-      <div>
-        <label>Gender:</label>
-        <input
-          type="radio"
-          name="gender"
-          id="gfemale"
-          value="female"
-        />
-        <label for="gfemale">Female</label>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dob" class="form-label">Date of Birth</label>
+          <input type="date" id="dob" name="dob" class="form-input" required>
+        </div>
 
-        <input
-          type="radio"
-          name="gender"
-          id="gmale"
-          value="male"
-        />
-        <label for="gmale">Male</label>
+        <div class="form-group">
+          <label for="age" class="form-label">Age</label>
+          <input type="number" id="age" name="age" class="form-input" required placeholder="e.g. 30">
+        </div>
       </div>
 
-      <div>
-        <label for="contact_num">Contact Number:</label>
-        <input
-          type="text"
-          id="contact_num"
-          name="contact_num"
-        />
+      <div class="form-group">
+        <label class="form-label">Gender</label>
+        <div class="radio-group">
+          <label class="radio-item">
+            <input type="radio" name="gender" id="gmale" value="male">
+            <span>Male</span>
+          </label>
+          <label class="radio-item">
+            <input type="radio" name="gender" id="gfemale" value="female">
+            <span>Female</span>
+          </label>
+        </div>
       </div>
 
-      <div>
-        <label for="dob">Date of Birth:</label>
-        <input
-          type="date"
-          id="dob"
-          name="dob"
-          required
-        />
+      <div class="form-group">
+        <label for="contact_num" class="form-label">Contact Number</label>
+        <input type="tel" id="contact_num" name="contact_num" class="form-input" placeholder="+1 234 567 8900">
       </div>
 
-      <div>
-        <label for="age">Age:</label>
-        <input
-          type="text"
-          id="age"
-          name="age"
-          required
-        />
-      </div>
-
-      <div>
-        <button type="submit">Submit</button>
-      </div>
-
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 1rem;">
+        Register
+      </button>
     </form>
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

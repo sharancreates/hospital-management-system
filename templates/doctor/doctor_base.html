@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/doctor/doctor.css') }}">
+{% block page_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div class="doctor-layout">
+    <aside class="doctor-sidebar">
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('doctor.doctor_dashboard') }}"
+                class="nav-item {% if request.endpoint == 'doctor.doctor_dashboard' %}active{% endif %}">
+                Dashboard
+            </a>
+            <!-- Assuming current_user is available or doctor id needed, usually passed in context or use current_user.doctor_id if linked -->
+            {% if doctor %} <!-- Sometimes doctor object is passed, or use current_user logic -->
+            <a href="{{ url_for('doctor.set_availability', doctor_id=doctor.doctor_id) }}"
+                class="nav-item {% if request.endpoint == 'doctor.set_availability' %}active{% endif %}">
+                My Availability
+            </a>
+            {% endif %}
+        </nav>
+    </aside>
+
+    <main class="doctor-content">
+        {% block doctor_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

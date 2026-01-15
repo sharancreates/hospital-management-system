@@ -1,14 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Profile</title>
-</head>
-<body>
-    <h3>Doctor Profile</h3>
-    <h2>Name : {{doctor.doc_name}}</h2>
-    <h2>Specialisation : {{doctor.department.department_name}}</h2>
-    <h2>Contact Number : {{doctor.contact_num}}</h2>
-</body>
-</html>
+{% extends "patient/patient_base.html" %}
+
+{% block title %}Doctor Profile - Arogya{% endblock %}
+
+{% block patient_content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div class="section-header">
+        <h2>Doctor Profile</h2>
+        <a href="{{ url_for('patient.patient_dashboard') }}" class="btn btn-secondary">Back</a>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <div
+            style="width: 100px; height: 100px; background-color: #e0f2fe; color: #0284c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; margin: 0 auto 1rem;">
+            {{ doctor.doc_name[0] }}
+        </div>
+        <h2 style="margin-bottom: 0.5rem;">{{ doctor.doc_name }}</h2>
+        <p style="color: var(--text-muted);">{{ doctor.department.department_name }}</p>
+    </div>
+
+    <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+                <span style="display: block; font-size: 0.875rem; color: var(--text-muted);">Contact Number</span>
+                <span style="font-weight: 500;">{{ doctor.contact_num }}</span>
+            </div>
+            <div>
+                <span style="display: block; font-size: 0.875rem; color: var(--text-muted);">Specialisation</span>
+                <span style="font-weight: 500;">{{ doctor.department.department_name }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 2rem; text-align: center;">
+        <a href="{{ url_for('patient.add_appointment', doctor_id=doctor.doctor_id) }}" class="btn btn-primary"
+            style="width: 100%;">Book Appointment</a>
+    </div>
+</div>
+{% endblock %}

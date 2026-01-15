@@ -1,82 +1,115 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Dashboard</title>
-</head>
-<body>
-    <h1>Hello {{patient.pat_name}}</h1>
-    <a href="{{ url_for('patient.update_patient', patient_id = patient.patient_id)}}">Update Profile</a>
-    <h3>Doctors available</h3>
-    <table border="2px">
-        <tr>
-            <th>Doctor</th>
-            <th>Specialisation</th>
-        </tr>
-        {%for doc in docs%}
-        <tr>
-            <td><a href="{{url_for('patient.doc_profile', doctor_id=doc.doctor_id)}}">{{doc.doc_name}}</a></td>
-            <td>{{doc.department.department_name}}</td>
-            <td><a href="{{url_for('patient.add_appointment', doctor_id=doc.doctor_id)}}">Add Appointment</a></td>
-        </tr>
-        {%endfor%}
-    </table>
+{% extends "patient/patient_base.html" %}
 
-    <h3>Specialisations available</h3>
-    <table border="2px">
-        <tr>
-            <th>Specialisation</th>
-        </tr>
-        {%for dept in department%}
-        <tr>
-            <td>{{dept.department_name}}</td>
-        </tr>
-        {%endfor%}
-    </table>
+{% block title %}Patient Dashboard - Arogya{% endblock %}
 
-    <h2>Appointments</h2>
-    <table border="1px">
-        <tr>
-            <th>ID</th>
-            <th>Doctor</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-        </tr>
-        {%for app in appointment%}
-        <tr>
-            <td>{{app.appointment_id}}</td>
-            <td>{{app.doctor.doc_name}}</td>
-            <td>{{app.date}}</td>
-            <td>{{app.time}}</td>
-            <td>{{app.status}}</td>
-            <td>
-                {% if app.status == 'booked' or app.status == 'Booked' %}
-                <a href="{{ url_for('patient.cancel_appointment', appointment_id=app.appointment_id) }}" 
-                class="btn btn-sm btn-danger"
-                onclick="return confirm('Are you sure you want to cancel this appointment?');">
-                Cancel Appointment
-                </a>
+{% block patient_content %}
+<div class="section-header">
+    <h1>Hello, {{ patient.pat_name }}</h1>
+    <a href="{{ url_for('patient.update_patient', patient_id = patient.patient_id)}}" class="btn btn-secondary">Update
+        Profile</a>
+</div>
+
+<!-- APPOINTMENTS -->
+<div class="card">
+    <div class="section-header">
+        <h3>My Appointments</h3>
+        <a href="{{url_for('patient.add_appointment')}}" class="btn btn-primary btn-sm">Book New</a>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <th>Records</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in appointment %}
+                <tr>
+                    <td>{{app.appointment_id}}</td>
+                    <td>{{app.doctor.doc_name}}</td>
+                    <td>{{app.date}}</td>
+                    <td>{{app.time}}</td>
+                    <td>
+                        <span class="badge 
+                        {% if app.status == 'Booked' %}badge-booked
+                        {% elif app.status == 'Completed' %}badge-completed
+                        {% else %}badge-default{% endif %}">
+                            {{ app.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if app.status == 'booked' or app.status == 'Booked' %}
+                        <a href="{{ url_for('patient.cancel_appointment', appointment_id=app.appointment_id) }}"
+                            class="btn btn-danger" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;"
+                            onclick="return confirm('Are you sure you want to cancel this appointment?');">
+                            Cancel
+                        </a>
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if app.status == "Completed" and app.treatment %}
+                        <a href="{{url_for('patient.view_treatment', treatment_id = app.treatment.treatment_id)}}"
+                            class="text-primary">View Treatment</a>
+                        {% elif app.status == "Completed" %}
+                        <span class="text-muted">Pending</span>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
                 {% else %}
-                &mdash;
-                {% endif %}
-            </td>
-            <td>
-                {%if app.status=="Completed" and app.treatment%}
-                <a href="{{url_for('patient.view_treatment', treatment_id = app.treatment.treatment_id)}}">Treatment</a>
-                {% elif app.status == "Completed" %}
-                <span class="text-muted">No treatment record</span>
-                {% endif %}
-            </td>
-        </tr>
-        {%endfor%}
-    </table>
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted);">No appointments found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-    <h7><a href="{{url_for('patient.add_appointment')}}">add appointment</a></h7>
+<!-- DOCTORS & DEPARTMENTS -->
+<div class="section-header" style="margin-top: 2rem;">
+    <h3>Available Doctors</h3>
+</div>
 
-    {% if current_user.is_authenticated %}
-    <a href="{{ url_for('auth.logout') }}">Logout</a>
-    {% endif %}
-</body>
-</html> 
+<div class="grid-cards">
+    {% for doc in docs %}
+    <div class="info-card">
+        <h4>{{ doc.doc_name }}</h4>
+        <p>{{ doc.department.department_name }}</p>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <a href="{{url_for('patient.doc_profile', doctor_id=doc.doctor_id)}}" class="btn btn-secondary btn-sm"
+                style="text-align: center;">View Profile</a>
+            <a href="{{url_for('patient.add_appointment', doctor_id=doc.doctor_id)}}" class="btn btn-primary btn-sm"
+                style="text-align: center;">Book Appointment</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="section-header">
+    <h3>Departments</h3>
+</div>
+<div class="card">
+    <div class="table-container">
+        <table>
+            <tbody>
+                {% for dept in department %}
+                <tr>
+                    <td>{{ dept.department_name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

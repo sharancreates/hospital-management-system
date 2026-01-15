@@ -1,27 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treatment</title>
-</head>
-<body>
-    <h1>Treatment</h1>
-    <h3>Doctor : {{doctor.doc_name}}</h3>
-    <h3>Patient : {{patient.pat_name}}</h3>
-    <h3>Date : {{app.date}}</h3>
-    <h3>Time : {{app.time}}</h3>
+{% extends "doctor/doctor_base.html" %}
+
+{% block title %}Add Treatment - Arogya{% endblock %}
+
+{% block doctor_content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div class="section-header">
+        <h2>Add Treatment Details</h2>
+    </div>
+
+    <div
+        style="background-color: #f8fafc; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 2rem; border: 1px solid var(--border-color);">
+        <p><strong>Patient:</strong> {{patient.pat_name}}</p>
+        <p><strong>Date:</strong> {{app.date}}</p>
+        <p><strong>Time:</strong> {{app.time}}</p>
+    </div>
+
     <form action="{{url_for('doctor.add_treatment', appointment_id = app.appointment_id)}}" method="POST">
-        <label for="ailment" name="ailment">Ailment</label>
-        <input name="ailment" type="text" class="ailment" id="ailment" required/>
-        <br>
-        <label for="prescription" name="prescription">Prescription</label>
-        <input name="prescription" type="text" class="prescription" id="prescription" required/>
-        <br>
-        <label for="notes" name="">Notes</label>
-        <input name="notes" type="text" class="notes" id="notes" required/>
-        <br>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="form-group">
+            <label for="ailment" class="form-label">Ailment</label>
+            <input name="ailment" type="text" class="form-input" id="ailment" required
+                placeholder="Diagnosed ailment" />
+        </div>
+
+        <div class="form-group">
+            <label for="prescription" class="form-label">Prescription</label>
+            <textarea name="prescription" class="form-input" id="prescription" required rows="3"
+                placeholder="Prescribed medicines and dosage"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="notes" class="form-label">Notes</label>
+            <textarea name="notes" class="form-input" id="notes" required rows="3"
+                placeholder="Additional observations"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Treatment</button>
     </form>
-</body>
-</html>
+</div>
+{% endblock %}

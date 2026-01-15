@@ -99,7 +99,8 @@ def view_treatment(treatment_id):
         patient=patient
     )
 
-MAX_APPOINTMENTS_PER_SLOT = 2
+MAX_APPOINTMENTS_PER_SLOT = 10
+count = 0
 
 @patient_bp.route("/add_appointment", methods=["GET", "POST"])
 @login_required
@@ -127,6 +128,7 @@ def add_appointment():
                 date=date_obj,
                 time=s.start_time
             ).count()
+            
             if booked_count < MAX_APPOINTMENTS_PER_SLOT:
                 available_slots.append(s)
 
@@ -147,18 +149,29 @@ def add_appointment():
             flash("This time slot is fully booked. Please select another slot.", "danger")
             return redirect(url_for("patient.add_appointment"))
 
+        new_token_number = booked_count + 1 
+
         new_appointment = Appointment(
             patient_id=patient.patient_id,
             doctor_id=selected_doctor,
             date=date_obj,
             time=slot.start_time,
-            status="booked"
+            status="booked",
+            token_number=new_token_number 
         )
-        db.session.add(new_appointment)
-        db.session.commit()
+        
+        try:
+            db.session.add(new_appointment)
+            db.session.commit()
+            flash(f"Appointment booked successfully! Your Token Number is {new_token_number}.", "success")
+            return redirect(url_for("patient.patient_dashboard"))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash("An error occurred while booking. Please try again.", "danger")
+            print(f"Error booking appointment: {e}")
+            return redirect(url_for("patient.add_appointment"))
 
-        flash("Appointment booked successfully!", "success")
-        return redirect(url_for("patient.patient_dashboard"))
 
     return render_template(
         "patient/add_appointment.html",

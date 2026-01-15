@@ -3,25 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Portal</title>
+    <title>{% block title %}Arogya Hospital Portal{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {% block css %}{% endblock %}
 </head>
 
 <body>
-    <nav>
-        <h2>Hospital Portal</h2>
+
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="nav-brand">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <span>Arogya</span>
+            </div>
+            <div class="nav-links">
+                {% if current_user.is_authenticated %}
+                     <!-- Determine dashboard link based on role (logic handles in specific pages or here if user object has role) -->
+                     <!-- For now, we assume logout is the main action if logged in, or specific links -->
+                     <a href="{{ url_for('auth.logout') }}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('doctor.doctor_dashboard') }}">Login</a>
+                {% endif %}
+            </div>
+        </div>
     </nav>
 
-    <div>
-        <h1>Welcome to the Hospital Management System</h1>
-        <p>Manage patients, doctors, and administrative tasks seamlessly.</p>
+    <main class="container" style="flex: 1; padding-top: 2rem; padding-bottom: 2rem; display: flex; flex-direction: column;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flashes">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
-        <div>
-            <a href="{{ url_for('patient.register') }}">Patient Registration</a>
-            <br>
-            <a href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a>
-            <br>
-            <a href="{{ url_for('doctor.doctor_dashboard') }}">Patient/Doctor Login</a>
+        {% block content %}
+        <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">Welcome to <span style="color: var(--primary-color);">Arogya</span></h1>
+            <p style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 3rem;">
+                Treating patients with compassion. Your health journey starts here.
+            </p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; text-align: left;">
+
+                <a href="{{ url_for('doctor.doctor_dashboard') }}" class="card" style="text-decoration: none; color: inherit; transition: border-color 0.2s;">
+                    <div style="color: var(--primary-color); margin-bottom: 1rem;">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                          </svg>
+                    </div>
+                    <h3 style="margin-bottom: 0.5rem; color: var(--primary-color);">Patient/Doctor Login</h3>
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">Access your dashboard, medical records, and appointments.</p>
+                </a>
+
+                <a href="{{ url_for('patient.register') }}" class="card" style="text-decoration: none; color: inherit; transition: border-color 0.2s;">
+                    <div style="color: var(--success-color); margin-bottom: 1rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                          </svg>
+                    </div>
+                    <h3 style="margin-bottom: 0.5rem; color: var(--success-color);">New Patient Registration</h3>
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">New to Arogya? Register here to get started with our services.</p>
+                </a>
+
+                 <a href="{{ url_for('admin.admin_dashboard') }}" class="card" style="text-decoration: none; color: inherit; transition: border-color 0.2s;">
+                    <div style="color: #a855f7; margin-bottom: 1rem;">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                    </div>
+                    <h3 style="margin-bottom: 0.5rem; color: #a855f7;">Admin Dashboard</h3>
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">Restricted access for hospital administration staff only.</p>
+                </a>
+
+            </div>
         </div>
-    </div>
+        {% endblock %}
+    </main>
+    
+    <footer>
+        <p>© 2025 Arogya Hospital. All rights reserved.</p>
+    </footer>
+
 </body>
 </html>

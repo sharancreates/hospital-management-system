@@ -1,46 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Set Availability</title>
-</head>
-<body>
+{% extends "doctor/doctor_base.html" %}
 
-<h3>Set Availability</h3>
+{% block title %}Set Availability - Arogya{% endblock %}
 
-<form method="POST">
-  <label for="date">Select Date:</label>
-  <input type="date" name="date" id="date" required min="{{ today }}">
+{% block doctor_content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+  <div class="section-header">
+    <h2>Set Availability</h2>
+  </div>
 
-  <h4>Select Time Slot:</h4>
-  {% for start, label in TIME_SLOTS.items() %}
-      <button type="submit" name="time" value="{{ start }}">{{ label }}</button><br><br>
-  {% endfor %}
-</form>
+  <form method="POST" style="margin-bottom: 2rem;">
+    <div class="form-group">
+      <label for="date" class="form-label">Select Date</label>
+      <input type="date" name="date" id="date" required min="{{ today }}" class="form-input" style="max-width: 200px;">
+    </div>
 
-<hr>
+    <h4 style="margin-bottom: 1rem;">Select Time Slot</h4>
+    <div class="slot-grid">
+      {% for start, label in TIME_SLOTS.items() %}
+      <button type="submit" name="time" value="{{ start }}" class="slot-btn">
+        {{ label }}
+      </button>
+      {% endfor %}
+    </div>
+  </form>
 
-<h4>Existing Slots</h4>
+  <div class="section-header">
+    <h3>Existing Slots</h3>
+  </div>
 
-<table border="1" cellpadding="8">
-  <tr>
-    <th>Date</th>
-    <th>Start Time</th>
-    <th>End Time</th>
-    <th>Action</th>
-  </tr>
-  {% for slot in slots %}
-    <tr>
-    <td>{{ slot.date.strftime('%d-%m-%Y') }}</td>
-    <td>{{ slot.start_time.strftime('%H:%m') }}</td>
-    <td>{{ slot.end_time.strftime('%H:%m') }}</td>
-    <td>
-      <a href="{{ url_for('doctor.remove_slot', slot_id=slot.id) }}">Remove</a>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
-
-</body>
-</html>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for slot in slots %}
+        <tr>
+          <td>{{ slot.date.strftime('%d-%m-%Y') }}</td>
+          <td>{{ slot.start_time.strftime('%H:%M') }}</td>
+          <td>{{ slot.end_time.strftime('%H:%M') }}</td>
+          <td>
+            <a href="{{ url_for('doctor.remove_slot', slot_id=slot.id) }}" class="text-danger"
+              onclick="return confirm('Remove this slot?');">Remove</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="4" style="text-align: center; color: var(--text-muted);">No slots available.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

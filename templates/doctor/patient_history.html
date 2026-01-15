@@ -1,31 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient History</title>
-</head>
-<body>
-    <h3>{{patient.pat_name}}</h3>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Doctor</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-            <th>Treatment</th>
-        </tr>
-         {% for app in appointment %}
-        <tr>
-            <td>{{ app.appointment_id }}</td>
-            <td>{{ app.doctor.doc_name}}</td>
-            <td>{{ app.date.strftime('%d-%m-%Y') }}</td>
-            <td>{{ app.time.strftime('%H:%M') }}</td>
-            <td>{{ app.status }}</td>
-            <td><a href="{{url_for('doctor.view_treatment', appointment_id = app.appointment_id)}}">Treatment Details</a></td>
-        </tr>
-        {%endfor%}
-    </table>
-</body>
-</html>
+{% extends "doctor/doctor_base.html" %}
+
+{% block title %}Patient History - Arogya{% endblock %}
+
+{% block doctor_content %}
+<div class="card">
+    <div class="section-header">
+        <h3>History: {{patient.pat_name}}</h3>
+        <a href="{{ url_for('doctor.doctor_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Treatment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in appointment %}
+                <tr>
+                    <td>{{ app.appointment_id }}</td>
+                    <td>{{ app.doctor.doc_name}}</td>
+                    <td>{{ app.date.strftime('%d-%m-%Y') }}</td>
+                    <td>{{ app.time.strftime('%H:%M') }}</td>
+                    <td>
+                        <span class="badge 
+                        {% if app.status == 'Booked' %}badge-booked
+                        {% elif app.status == 'Completed' %}badge-completed
+                        {% else %}badge-default{% endif %}">
+                            {{ app.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if app.status == 'Completed' %}
+                        <a href="{{url_for('doctor.view_treatment', appointment_id = app.appointment_id)}}"
+                            class="text-primary">Treatment Details</a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted);">No history found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
