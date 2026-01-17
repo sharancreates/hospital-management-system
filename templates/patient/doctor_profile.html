@@ -3,37 +3,58 @@
 {% block title %}Doctor Profile - Arogya{% endblock %}
 
 {% block patient_content %}
-<div class="card" style="max-width: 600px; margin: 0 auto;">
-    <div class="section-header">
-        <h2>Doctor Profile</h2>
-        <a href="{{ url_for('patient.patient_dashboard') }}" class="btn btn-secondary">Back</a>
+<div class="flex justify-center items-start min-h-[80vh]">
+  
+  <div class="w-full max-w-lg bg-gray-900 border border-gray-800 rounded-2xl shadow-xl overflow-hidden">
+    
+    <div class="p-6 border-b border-gray-800 flex justify-between items-center">
+        <h2 class="text-xl font-bold text-white tracking-tight">Doctor Profile</h2>
+        <a href="{{ url_for('patient.patient_dashboard') }}" class="text-gray-400 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </a>
     </div>
 
-    <div style="text-align: center; margin-bottom: 2rem;">
-        <div
-            style="width: 100px; height: 100px; background-color: #e0f2fe; color: #0284c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; margin: 0 auto 1rem;">
+    <div class="flex flex-col items-center justify-center pt-10 pb-6 px-6 text-center">
+        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-3xl font-bold text-white shadow-xl shadow-blue-900/20 mb-4 border-4 border-gray-800">
             {{ doctor.doc_name[0] }}
         </div>
-        <h2 style="margin-bottom: 0.5rem;">{{ doctor.doc_name }}</h2>
-        <p style="color: var(--text-muted);">{{ doctor.department.department_name }}</p>
+        
+        <h2 class="text-2xl font-bold text-white">{{ doctor.doc_name }}</h2>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-blue-900/30 text-blue-300 border border-blue-800/50 mt-2">
+            {{ doctor.department.department_name }}
+        </span>
     </div>
 
-    <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div>
-                <span style="display: block; font-size: 0.875rem; color: var(--text-muted);">Contact Number</span>
-                <span style="font-weight: 500;">{{ doctor.contact_num }}</span>
+    <div class="border-t border-gray-800 bg-gray-950/30 p-8">
+        <div class="grid grid-cols-2 gap-6">
+            
+            <div class="flex flex-col gap-1">
+                <span class="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                    Contact
+                </span>
+                <span class="text-white font-medium text-lg">{{ doctor.contact_num }}</span>
             </div>
-            <div>
-                <span style="display: block; font-size: 0.875rem; color: var(--text-muted);">Specialisation</span>
-                <span style="font-weight: 500;">{{ doctor.department.department_name }}</span>
+
+            <div class="flex flex-col gap-1">
+                <span class="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    Department
+                </span>
+                <span class="text-white font-medium text-lg">{{ doctor.department.department_name }}</span>
             </div>
+
         </div>
     </div>
 
-    <div style="margin-top: 2rem; text-align: center;">
-        <a href="{{ url_for('patient.add_appointment', doctor_id=doctor.doctor_id) }}" class="btn btn-primary"
-            style="width: 100%;">Book Appointment</a>
+    <div class="p-6 border-t border-gray-800 bg-gray-900">
+        <a href="{{ url_for('patient.add_appointment', doctor_id=doctor.doctor_id) }}" 
+           class="w-full flex items-center justify-center gap-2 text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-800 font-bold rounded-lg text-sm px-5 py-4 text-center shadow-lg hover:shadow-blue-500/20 transition-all transform hover:-translate-y-0.5">
+            <span>Book Appointment</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+        </a>
     </div>
+
+  </div>
 </div>
 {% endblock %}

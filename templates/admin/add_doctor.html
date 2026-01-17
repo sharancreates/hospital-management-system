@@ -3,55 +3,101 @@
 {% block title %}Add Doctor - Arogya{% endblock %}
 
 {% block admin_content %}
-<div class="card" style="max-width: 600px; margin: 0 auto;">
-  <div class="section-header">
-    <h2>Add New Doctor</h2>
-  </div>
-
-  <form action="{{ url_for('admin.add_doctor') }}" method="POST" id="new-doc">
-
-    <div class="form-group">
-      <label for="doc-name" class="form-label">Name of the Doctor</label>
-      <input type="text" id="doc-name" name="doc-name" class="form-input" required placeholder="Dr. Name">
+<div class="flex justify-center items-start min-h-[80vh]">
+  
+  <div class="w-full max-w-2xl bg-gray-900 border border-gray-800 rounded-2xl shadow-xl overflow-hidden">
+    
+    <div class="p-8 border-b border-gray-800">
+      <h2 class="text-2xl font-bold text-white tracking-tight">Add New Doctor</h2>
+      <p class="text-gray-400 text-sm mt-1">Enter the details below to register a new medical professional.</p>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Gender</label>
-      <div style="display: flex; gap: 1rem;">
-        <label style="display: flex; gap: 0.5rem; align-items: center;">
-          <input type="radio" name="gender" id="gfemale" value="female">
-          <span>Female</span>
-        </label>
-        <label style="display: flex; gap: 0.5rem; align-items: center;">
-          <input type="radio" name="gender" id="gmale" value="male">
-          <span>Male</span>
-        </label>
+    <form action="{{ url_for('admin.add_doctor') }}" method="POST" id="new-doc" class="p-8 space-y-6">
+
+      <div>
+        <label for="doc-name" class="block text-sm font-medium text-gray-300 mb-2">Name of the Doctor</label>
+        <input 
+          type="text" 
+          id="doc-name" 
+          name="doc-name" 
+          required 
+          placeholder="e.g. Dr. Sarah Smith"
+          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
+        >
       </div>
-    </div>
 
-    <div class="form-group">
-      <label for="contact_num" class="form-label">Contact Number</label>
-      <input type="tel" id="contact_num" name="contact_num" class="form-input" placeholder="+1 234 567 8900">
-    </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-3">Gender</label>
+        <div class="flex gap-6">
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <div class="relative flex items-center">
+              <input type="radio" name="gender" id="gfemale" value="female" class="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-gray-600 checked:border-blue-500 checked:bg-blue-600 transition-all">
+              <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+            </div>
+            <span class="text-gray-300 group-hover:text-white transition-colors">Female</span>
+          </label>
 
-    <div class="form-group">
-      <label for="dob" class="form-label">Date of Birth</label>
-      <input type="date" id="dob" name="dob" class="form-input" required>
-    </div>
+          <label class="flex items-center gap-3 cursor-pointer group">
+             <div class="relative flex items-center">
+              <input type="radio" name="gender" id="gmale" value="male" class="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-gray-600 checked:border-blue-500 checked:bg-blue-600 transition-all">
+              <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+            </div>
+            <span class="text-gray-300 group-hover:text-white transition-colors">Male</span>
+          </label>
+        </div>
+      </div>
 
-    <div class="form-group">
-      <label for="specialization" class="form-label">Specialization</label>
-      <select id="specialization" name="specialization" class="form-select" required>
-        <option selected disabled value="">Select Department</option>
-        {% for dept in department %}
-        <option value="{{ dept.department_id }}">
-          {{ dept.department_name }}
-        </option>
-        {% endfor %}
-      </select>
-    </div>
+      <div>
+        <label for="contact_num" class="block text-sm font-medium text-gray-300 mb-2">Contact Number</label>
+        <input 
+          type="tel" 
+          id="contact_num" 
+          name="contact_num" 
+          placeholder="+1 234 567 8900"
+          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
+        >
+      </div>
 
-    <button type="submit" class="btn btn-primary" style="width: 100%;">Add Doctor</button>
-  </form>
+      <div>
+        <label for="dob" class="block text-sm font-medium text-gray-300 mb-2">Date of Birth</label>
+        <input 
+          type="date" 
+          id="dob" 
+          name="dob" 
+          required
+          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all [color-scheme:dark]"
+        >
+      </div>
+
+      <div>
+        <label for="specialization" class="block text-sm font-medium text-gray-300 mb-2">Specialization</label>
+        <div class="relative">
+          <select 
+            id="specialization" 
+            name="specialization" 
+            required 
+            class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 appearance-none cursor-pointer outline-none transition-all"
+          >
+            <option selected disabled value="" class="text-gray-500">Select Department</option>
+            {% for dept in department %}
+            <option value="{{ dept.department_id }}" class="bg-gray-900 py-2">
+              {{ dept.department_name }}
+            </option>
+            {% endfor %}
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4">
+        <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-800 font-bold rounded-lg text-sm px-5 py-3.5 text-center shadow-lg hover:shadow-blue-500/20 transition-all">
+          Add Doctor
+        </button>
+      </div>
+
+    </form>
+  </div>
 </div>
 {% endblock %}

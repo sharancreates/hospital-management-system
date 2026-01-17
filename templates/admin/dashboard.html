@@ -3,180 +3,212 @@
 {% block title %}Admin Dashboard - Arogya{% endblock %}
 
 {% block admin_content %}
-<div class="section-header">
-    <h1>Admin Dashboard</h1>
-    <a href="{{ url_for('admin.add_doctor') }}" class="btn btn-primary">Add New Doctor</a>
-</div>
+<div class="space-y-8">
 
-<!-- DOCTORS SECTION -->
-<div class="card">
-    <div class="section-header">
-        <h3>Doctor Profiles</h3>
-        <form action="{{ url_for('admin.searchdocs') }}" method="get" class="search-bar">
-            <input type="search" name="q" placeholder="Search doctor by name or ID" value="{{ query or '' }}"
-                class="form-input">
-            <button type="submit" class="btn btn-secondary">Search</button>
-        </form>
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-lg">
+        <div>
+            <h1 class="text-2xl font-bold text-white tracking-tight">Admin Dashboard</h1>
+            <p class="text-gray-400 text-sm mt-1">Manage doctors, patients, and hospital appointments.</p>
+        </div>
+        <a href="{{ url_for('admin.add_doctor') }}" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all shadow-lg hover:shadow-blue-500/20">
+            <span>+ Add New Doctor</span>
+        </a>
     </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Specialization</th>
-                    <th>Contact</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% set doctor_list = doctor_results if doctor_results is not none else docs %}
-                {% for doctor in doctor_list %}
-                <tr>
-                    <td>{{ doctor.doctor_id }}</td>
-                    <td>{{ doctor.doc_name }}</td>
-                    <td>{{ doctor.department.department_name }}</td>
-                    <td>{{ doctor.contact_num }}</td>
-                    <td class="action-links">
-                        <a href="{{ url_for('admin.update_doctor', doctor_id=doctor.doctor_id) }}"
-                            class="text-primary">Update</a>
-                        <a href="{{ url_for('admin.delete_doctor', doctor_id=doctor.doctor_id) }}" class="text-danger"
-                            onclick="return confirm('Are you sure you want to delete this doctor?');">Delete</a>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="5" style="text-align: center; color: var(--text-muted);">No doctors found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
+            <h3 class="text-lg font-semibold text-white">Doctor Profiles</h3>
+            
+            <form action="{{ url_for('admin.searchdocs') }}" method="get" class="flex w-full md:w-auto gap-2">
+                <input type="search" name="q" placeholder="Search by name or ID..." value="{{ query or '' }}"
+                    class="bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full md:w-64 p-2.5 outline-none placeholder-gray-500">
+                <button type="submit" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-700">
+                    Search
+                </button>
+            </form>
+        </div>
 
-<!-- PATIENTS SECTION -->
-<div class="card">
-    <div class="section-header">
-        <h3>Patient Profiles</h3>
-        <form action="{{ url_for('admin.searchpats') }}" method="get" class="search-bar">
-            <input type="search" name="p" placeholder="Search patient by name or ID" value="{{ query or '' }}"
-                class="form-input">
-            <button type="submit" class="btn btn-secondary">Search</button>
-        </form>
-    </div>
-
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Gender</th>
-                    <th>DOB</th>
-                    <th>Age</th>
-                    <th>Contact</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% set patient_list = patient_results if patient_results is not none else pats %}
-                {% for p in patient_list %}
-                <tr>
-                    <td>{{ p.patient_id }}</td>
-                    <td>{{ p.pat_name }}</td>
-                    <td>{{ p.gender }}</td>
-                    <td>{{ p.dob }}</td>
-                    <td>{{ p.age }}</td>
-                    <td>{{ p.contact_num }}</td>
-                    <td class="action-links">
-                        <a href="{{ url_for('admin.update_patient', patient_id=p.patient_id) }}"
-                            class="text-primary">Update</a>
-                        <a href="{{ url_for('admin.delete_patient', patient_id=p.patient_id) }}" class="text-danger"
-                            onclick="return confirm('Are you sure you want to delete this patient?');">Delete</a>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="7" style="text-align: center; color: var(--text-muted);">No patients found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- APPOINTMENTS SECTION -->
-<div class="card">
-    <div class="section-header">
-        <h3>Appointments</h3>
-        <a href="{{ url_for('admin.set_appointment') }}" class="btn btn-secondary">Set Appointment</a>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-400">
+                <thead class="text-xs text-gray-400 uppercase bg-gray-950/50 border-b border-gray-800">
+                    <tr>
+                        <th class="px-6 py-4 font-medium">ID</th>
+                        <th class="px-6 py-4 font-medium">Name</th>
+                        <th class="px-6 py-4 font-medium">Specialization</th>
+                        <th class="px-6 py-4 font-medium">Contact</th>
+                        <th class="px-6 py-4 font-medium">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800">
+                    {% set doctor_list = doctor_results if doctor_results is not none else docs %}
+                    {% for doctor in doctor_list %}
+                    <tr class="hover:bg-gray-800/50 transition-colors">
+                        <td class="px-6 py-4 font-mono text-gray-500">#{{ doctor.doctor_id }}</td>
+                        <td class="px-6 py-4 font-medium text-white">{{ doctor.doc_name }}</td>
+                        <td class="px-6 py-4">
+                            <span class="bg-blue-900/30 text-blue-300 px-2.5 py-0.5 rounded text-xs border border-blue-800/50">
+                                {{ doctor.department.department_name }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">{{ doctor.contact_num }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex gap-4">
+                                <a href="{{ url_for('admin.update_doctor', doctor_id=doctor.doctor_id) }}" class="text-blue-400 hover:text-blue-300 font-medium hover:underline">Update</a>
+                                <a href="{{ url_for('admin.delete_doctor', doctor_id=doctor.doctor_id) }}" class="text-red-400 hover:text-red-300 font-medium hover:underline" onclick="return confirm('Are you sure you want to delete this doctor?');">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">No doctors found matching your query.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Patient</th>
-                    <th>Doctor</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                    <th>Treatment</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for app in appointments %}
-                <tr>
-                    <td>{{ app.appointment_id }}</td>
-                    <td>{{ app.patient.pat_name }}</td>
-                    <td>{{ app.doctor.doc_name }}</td>
-                    <td>{{ app.date }}</td>
-                    <td>{{ app.time }}</td>
-                    <td>
-                        <span class="badge 
-                        {% if app.status == 'Booked' %}badge-booked
-                        {% elif app.status == 'Completed' %}badge-completed
-                        {% else %}badge-default{% endif %}">
-                            {{ app.status }}
-                        </span>
-                    </td>
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
+            <h3 class="text-lg font-semibold text-white">Patient Profiles</h3>
+            <form action="{{ url_for('admin.searchpats') }}" method="get" class="flex w-full md:w-auto gap-2">
+                <input type="search" name="p" placeholder="Search by name or ID..." value="{{ query or '' }}"
+                    class="bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full md:w-64 p-2.5 outline-none placeholder-gray-500">
+                <button type="submit" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-700">
+                    Search
+                </button>
+            </form>
+        </div>
 
-                    <td class="action-links">
-                        {% if app.status == 'Booked' %}
-                        <form method="POST"
-                            action="{{ url_for('admin.complete_appointment', appointment_id=app.appointment_id) }}"
-                            style="display:inline;">
-                            <button type="submit" class="btn btn-primary"
-                                style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Complete</button>
-                        </form>
-                        <a href="{{ url_for('admin.cancel_appointment', appointment_id=app.appointment_id) }}"
-                            onclick="return confirm('Cancel appointment?');" class="text-danger">Cancel</a>
-                        {% else %}
-                        -
-                        {% endif %}
-                    </td>
-
-                    <td class="action-links">
-                        {% if app.status == 'Completed' and app.treatment %}
-                        <a
-                            href="{{ url_for('admin.view_treatment', treatment_id=app.treatment.treatment_id) }}">View</a>
-                        {% elif app.status == 'Completed' %}
-                        No record
-                        {% else %}
-                        -
-                        {% endif %}
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="8" style="text-align: center; color: var(--text-muted);">No appointments found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-400">
+                <thead class="text-xs text-gray-400 uppercase bg-gray-950/50 border-b border-gray-800">
+                    <tr>
+                        <th class="px-6 py-4 font-medium">ID</th>
+                        <th class="px-6 py-4 font-medium">Name</th>
+                        <th class="px-6 py-4 font-medium">Gender</th>
+                        <th class="px-6 py-4 font-medium">DOB</th>
+                        <th class="px-6 py-4 font-medium">Age</th>
+                        <th class="px-6 py-4 font-medium">Contact</th>
+                        <th class="px-6 py-4 font-medium">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800">
+                    {% set patient_list = patient_results if patient_results is not none else pats %}
+                    {% for p in patient_list %}
+                    <tr class="hover:bg-gray-800/50 transition-colors">
+                        <td class="px-6 py-4 font-mono text-gray-500">#{{ p.patient_id }}</td>
+                        <td class="px-6 py-4 font-medium text-white">{{ p.pat_name }}</td>
+                        <td class="px-6 py-4">{{ p.gender }}</td>
+                        <td class="px-6 py-4">{{ p.dob }}</td>
+                        <td class="px-6 py-4">{{ p.age }}</td>
+                        <td class="px-6 py-4">{{ p.contact_num }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex gap-4">
+                                <a href="{{ url_for('admin.update_patient', patient_id=p.patient_id) }}" class="text-blue-400 hover:text-blue-300 font-medium hover:underline">Update</a>
+                                <a href="{{ url_for('admin.delete_patient', patient_id=p.patient_id) }}" class="text-red-400 hover:text-red-300 font-medium hover:underline" onclick="return confirm('Are you sure you want to delete this patient?');">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">No patients found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <div class="p-6 border-b border-gray-800 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-white">Appointments</h3>
+            <a href="{{ url_for('admin.set_appointment') }}" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-700">
+                Set Appointment
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-400">
+                <thead class="text-xs text-gray-400 uppercase bg-gray-950/50 border-b border-gray-800">
+                    <tr>
+                        <th class="px-6 py-4 font-medium">ID</th>
+                        <th class="px-6 py-4 font-medium">Patient</th>
+                        <th class="px-6 py-4 font-medium">Doctor</th>
+                        <th class="px-6 py-4 font-medium">Date & Time</th>
+                        <th class="px-6 py-4 font-medium">Status</th>
+                        <th class="px-6 py-4 font-medium">Actions</th>
+                        <th class="px-6 py-4 font-medium">Treatment</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800">
+                    {% for app in appointments %}
+                    <tr class="hover:bg-gray-800/50 transition-colors">
+                        <td class="px-6 py-4 font-mono text-gray-500">#{{ app.appointment_id }}</td>
+                        <td class="px-6 py-4 font-medium text-white">{{ app.patient.pat_name }}</td>
+                        <td class="px-6 py-4 text-gray-300">{{ app.doctor.doc_name }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-col">
+                                <span class="text-white">{{ app.date }}</span>
+                                <span class="text-xs text-gray-500">{{ app.time }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if app.status == 'Booked' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-900/30 text-amber-300 border border-amber-800/50">
+                                    <span class="w-1.5 h-1.5 mr-1.5 bg-amber-400 rounded-full"></span> Booked
+                                </span>
+                            {% elif app.status == 'Completed' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-900/30 text-emerald-300 border border-emerald-800/50">
+                                    <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full"></span> Completed
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-gray-300 border border-gray-700">
+                                    {{ app.status }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td class="px-6 py-4">
+                            {% if app.status == 'Booked' %}
+                            <div class="flex items-center gap-3">
+                                <form method="POST" action="{{ url_for('admin.complete_appointment', appointment_id=app.appointment_id) }}">
+                                    <button type="submit" class="text-emerald-400 hover:text-emerald-300 font-medium text-xs border border-emerald-900 bg-emerald-900/10 px-2 py-1 rounded hover:bg-emerald-900/30 transition-colors">
+                                        Complete
+                                    </button>
+                                </form>
+                                <a href="{{ url_for('admin.cancel_appointment', appointment_id=app.appointment_id) }}"
+                                   onclick="return confirm('Cancel appointment?');" 
+                                   class="text-red-400 hover:text-red-300 font-medium text-xs hover:underline">
+                                    Cancel
+                                </a>
+                            </div>
+                            {% else %}
+                            <span class="text-gray-600">-</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="px-6 py-4">
+                            {% if app.status == 'Completed' and app.treatment %}
+                                <a href="{{ url_for('admin.view_treatment', treatment_id=app.treatment.treatment_id) }}" class="text-blue-400 hover:text-blue-300 font-medium hover:underline">
+                                    View Record
+                                </a>
+                            {% elif app.status == 'Completed' %}
+                                <span class="text-gray-500 italic text-xs">Pending entry</span>
+                            {% else %}
+                                <span class="text-gray-600">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">No appointments scheduled.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

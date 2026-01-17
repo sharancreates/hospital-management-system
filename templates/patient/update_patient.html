@@ -3,53 +3,113 @@
 {% block title %}Update Profile - Arogya{% endblock %}
 
 {% block patient_content %}
-<div class="card" style="max-width: 600px; margin: 0 auto;">
-  <div class="section-header">
-    <h2>Edit Profile</h2>
-  </div>
-
-  <form action="{{ url_for('patient.update_patient', patient_id=patient.patient_id) }}" method="POST"
-    id="update-patient">
-
-    <div class="form-group">
-      <label for="pat-name" class="form-label">Name</label>
-      <input type="text" id="pat-name" name="pat-name" class="form-input" required
-        value="{{ patient.pat_name if patient else '' }}">
+<div class="flex justify-center items-start min-h-[80vh]">
+  
+  <div class="w-full max-w-2xl bg-gray-900 border border-gray-800 rounded-2xl shadow-xl overflow-hidden">
+    
+    <div class="p-8 border-b border-gray-800">
+      <h2 class="text-2xl font-bold text-white tracking-tight">Edit Profile</h2>
+      <p class="text-gray-400 text-sm mt-1">Update your personal information below.</p>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Gender</label>
-      <div style="display: flex; gap: 1rem;">
-        <label style="display: flex; gap: 0.5rem; align-items: center;">
-          <input type="radio" name="gender" id="gfemale" value="female" {% if patient and patient.gender=='female'
-            %}checked{% endif %}>
-          <span>Female</span>
-        </label>
-        <label style="display: flex; gap: 0.5rem; align-items: center;">
-          <input type="radio" name="gender" id="gmale" value="male" {% if patient and patient.gender=='male' %}checked{%
-            endif %}>
-          <span>Male</span>
-        </label>
+    <form action="{{ url_for('patient.update_patient', patient_id=patient.patient_id) }}" method="POST" id="update-patient" class="p-8 space-y-6">
+
+      <div>
+        <label for="pat-name" class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+        <input 
+          type="text" 
+          id="pat-name" 
+          name="pat-name" 
+          required 
+          value="{{ patient.pat_name if patient else '' }}"
+          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
+        >
       </div>
-    </div>
 
-    <div class="form-group">
-      <label for="contact_num" class="form-label">Contact Number</label>
-      <input type="tel" id="contact_num" name="contact_num" class="form-input"
-        value="{{ patient.contact_num if patient else '' }}">
-    </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-3">Gender</label>
+        <div class="flex gap-6">
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <div class="relative flex items-center">
+              <input 
+                type="radio" 
+                name="gender" 
+                id="gfemale" 
+                value="female" 
+                {% if patient and patient.gender=='female' %}checked{% endif %}
+                class="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-gray-600 checked:border-blue-500 checked:bg-blue-600 transition-all"
+              >
+              <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+            </div>
+            <span class="text-gray-300 group-hover:text-white transition-colors">Female</span>
+          </label>
 
-    <div class="form-group">
-      <label for="dob" class="form-label">Date of Birth</label>
-      <input type="date" id="dob" name="dob" class="form-input" required value="{{ patient.dob if patient else '' }}">
-    </div>
+          <label class="flex items-center gap-3 cursor-pointer group">
+             <div class="relative flex items-center">
+              <input 
+                type="radio" 
+                name="gender" 
+                id="gmale" 
+                value="male" 
+                {% if patient and patient.gender=='male' %}checked{% endif %}
+                class="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-gray-600 checked:border-blue-500 checked:bg-blue-600 transition-all"
+              >
+              <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+            </div>
+            <span class="text-gray-300 group-hover:text-white transition-colors">Male</span>
+          </label>
+        </div>
+      </div>
 
-    <div class="form-group">
-      <label for="age" class="form-label">Age</label>
-      <input type="number" id="age" name="age" class="form-input" required value="{{ patient.age if patient else '' }}">
-    </div>
+      <div>
+        <label for="contact_num" class="block text-sm font-medium text-gray-300 mb-2">Contact Number</label>
+        <input 
+          type="tel" 
+          id="contact_num" 
+          name="contact_num" 
+          value="{{ patient.contact_num if patient else '' }}"
+          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
+        >
+      </div>
 
-    <button type="submit" class="btn btn-primary" style="width: 100%;">Update Changes</button>
-  </form>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <div>
+            <label for="dob" class="block text-sm font-medium text-gray-300 mb-2">Date of Birth</label>
+            <input 
+              type="date" 
+              id="dob" 
+              name="dob" 
+              required
+              value="{{ patient.dob if patient else '' }}"
+              class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all [color-scheme:dark]"
+            >
+          </div>
+
+          <div>
+            <label for="age" class="block text-sm font-medium text-gray-300 mb-2">Age</label>
+            <input 
+              type="number" 
+              id="age" 
+              name="age" 
+              required 
+              value="{{ patient.age if patient else '' }}"
+              class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
+            >
+          </div>
+      </div>
+
+      <div class="pt-4 flex gap-4">
+        <button type="submit" class="flex-1 text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-800 font-bold rounded-lg text-sm px-5 py-3.5 text-center shadow-lg hover:shadow-blue-500/20 transition-all">
+          Update Changes
+        </button>
+
+        <a href="{{ url_for('patient.patient_dashboard') }}" class="flex-1 text-gray-300 bg-gray-800 hover:bg-gray-700 hover:text-white font-medium rounded-lg text-sm px-5 py-3.5 text-center transition-all border border-gray-700">
+            Cancel
+        </a>
+      </div>
+
+    </form>
+  </div>
 </div>
 {% endblock %}

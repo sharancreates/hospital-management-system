@@ -3,69 +3,130 @@
 {% block title %}Register - Arogya{% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/patient/register.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="register-container">
-  <div class="card">
-    <div class="register-header">
-      <h2>Patient Registration</h2>
-      <p style="color: var(--text-muted);">Join Arogya today for better healthcare.</p>
+<div class="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+  
+  <div class="w-full max-w-lg bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
+    
+    <div class="p-8 border-b border-gray-800 text-center">
+      <h2 class="text-3xl font-bold text-white tracking-tight">Patient Registration</h2>
+      <p class="text-gray-400 text-sm mt-2">Join Arogya today for better healthcare.</p>
     </div>
 
-    <form action="{{ url_for('patient.register') }}" method="POST" id="new_pat">
+    <form action="{{ url_for('patient.register') }}" method="POST" id="new_pat" class="p-8 space-y-5">
 
-      <div class="form-group">
-        <label for="pat_name" class="form-label">Full Name</label>
-        <input type="text" id="pat_name" name="pat_name" class="form-input" required placeholder="John Doe">
+      <div>
+        <label for="pat_name" class="block text-sm font-medium text-gray-300 mb-1.5">Full Name</label>
+        <input 
+          type="text" 
+          id="pat_name" 
+          name="pat_name" 
+          required 
+          placeholder="e.g. John Doe"
+          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
+        >
       </div>
 
-      <div class="form-group">
-        <label for="email" class="form-label">Email Address</label>
-        <input type="email" id="email" name="email" class="form-input" required placeholder="john@example.com">
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          required 
+          placeholder="you@example.com"
+          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
+        >
       </div>
 
-      <div class="form-group">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" id="password" name="password" class="form-input" required
-          placeholder="Choose a secure password">
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          required
+          placeholder="Choose a secure password"
+          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
+        >
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="dob" class="form-label">Date of Birth</label>
-          <input type="date" id="dob" name="dob" class="form-input" required>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="dob" class="block text-sm font-medium text-gray-300 mb-1.5">Date of Birth</label>
+          <input 
+            type="date" 
+            id="dob" 
+            name="dob" 
+            required
+            class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all [color-scheme:dark]"
+          >
         </div>
-
-        <div class="form-group">
-          <label for="age" class="form-label">Age</label>
-          <input type="number" id="age" name="age" class="form-input" required placeholder="e.g. 30">
+        <div>
+          <label for="age" class="block text-sm font-medium text-gray-300 mb-1.5">Age</label>
+          <input 
+            type="number" 
+            id="age" 
+            name="age" 
+            required 
+            placeholder="30"
+            class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
+          >
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Gender</label>
-        <div class="radio-group">
-          <label class="radio-item">
-            <input type="radio" name="gender" id="gmale" value="male">
-            <span>Male</span>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Gender</label>
+        <div class="flex gap-6">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <div class="relative flex items-center">
+              <input type="radio" name="gender" id="gmale" value="male" class="peer h-4 w-4 cursor-pointer appearance-none rounded-full border border-gray-600 checked:border-blue-500 checked:bg-blue-600 transition-all">
+              <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+            </div>
+            <span class="text-sm text-gray-400 group-hover:text-white transition-colors">Male</span>
           </label>
-          <label class="radio-item">
-            <input type="radio" name="gender" id="gfemale" value="female">
-            <span>Female</span>
+
+          <label class="flex items-center gap-2 cursor-pointer group">
+             <div class="relative flex items-center">
+              <input type="radio" name="gender" id="gfemale" value="female" class="peer h-4 w-4 cursor-pointer appearance-none rounded-full border border-gray-600 checked:border-blue-500 checked:bg-blue-600 transition-all">
+              <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+            </div>
+            <span class="text-sm text-gray-400 group-hover:text-white transition-colors">Female</span>
           </label>
+
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <div class="relative flex items-center">
+             <input type="radio" name="gender" id="gothers" value="others" class="peer h-4 w-4 cursor-pointer appearance-none rounded-full border border-gray-600 checked:border-blue-500 checked:bg-blue-600 transition-all">
+             <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+           </div>
+           <span class="text-sm text-gray-400 group-hover:text-white transition-colors">Others</span>
+         </label>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="contact_num" class="form-label">Contact Number</label>
-        <input type="tel" id="contact_num" name="contact_num" class="form-input" placeholder="+1 234 567 8900">
+      <div>
+        <label for="contact_num" class="block text-sm font-medium text-gray-300 mb-1.5">Contact Number</label>
+        <input 
+          type="tel" 
+          id="contact_num" 
+          name="contact_num" 
+          placeholder="84010 XXXXX"
+          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
+        >
       </div>
 
-      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 1rem;">
-        Register
-      </button>
+      <div class="pt-2">
+        <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-800 font-bold rounded-lg text-sm px-5 py-3.5 text-center shadow-lg hover:shadow-blue-500/20 transition-all">
+          Register
+        </button>
+      </div>
+
+      <div class="text-center text-sm text-gray-500 pt-2">
+        <p>Already have an account? <a href="{{ url_for('doctor.doctor_dashboard') }}" class="text-blue-400 hover:underline hover:text-blue-300">Login here</a></p>
+      </div>
+
     </form>
   </div>
 </div>
