@@ -21,7 +21,7 @@ def create_app():
         return User.query.get(int(user_id))
     
     @app.route('/')
-    def index():
+    def index():    
         return render_template('base.html')
 
     register_bp(app)

@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arogya Hospital - World Class Care</title>
+    <title>{% block title %}Arogya Hospital Portal{% endblock %}</title>
     
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {% block css %}{% endblock %}
 </head>
 
 <body class="bg-gray-950 text-gray-100 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
@@ -32,254 +33,67 @@
         </div>
     </nav>
 
-    <main class="flex-grow pt-24">
-        
-        <section class="relative px-6 pb-20 pt-10">
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-96 bg-blue-600/20 rounded-full blur-[100px] -z-10"></div>
-
-            <div class="max-w-7xl mx-auto text-center space-y-8">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                    <div class="max-w-xl mx-auto mb-8">
-                        {% for category, message in messages %}
-                            <div class="p-4 rounded-lg border text-sm flex items-center gap-3 justify-center shadow-sm
-                                {% if category == 'error' %} border-red-900/50 bg-red-900/10 text-red-200 
-                                {% else %} border-blue-900/50 bg-blue-900/10 text-blue-200 {% endif %}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                {% endwith %}
-
-                <h1 class="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
-                    Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Arogya</span>
-                </h1>
-                <p class="text-xl md:text-2xl text-gray-400 font-light max-w-2xl mx-auto">
-                    Treating patients with compassion. <br class="hidden md:block"/> Your health journey starts here.
-                </p>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mx-auto pt-8">
-                    <a href="{{ url_for('doctor.doctor_dashboard') }}" class="group relative p-8 bg-gray-900 border border-gray-800 rounded-2xl hover:border-blue-500/50 hover:bg-gray-800/80 transition-all duration-300 hover:-translate-y-1 shadow-xl hover:shadow-blue-900/10 text-left">
-                        <div class="w-12 h-12 bg-blue-900/30 rounded-lg flex items-center justify-center mb-4 text-blue-400 group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+    <main class="flex-grow pt-24 pb-12 px-6"> <div class="max-w-7xl mx-auto">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="mb-8 space-y-2 max-w-3xl mx-auto">
+                    {% for category, message in messages %}
+                        <div class="p-4 rounded-lg border flex items-center gap-3 shadow-sm
+                            {% if category == 'error' %} border-red-900/50 bg-red-900/10 text-red-200 
+                            {% elif category == 'success' %} border-green-900/50 bg-green-900/10 text-green-200 
+                            {% else %} border-blue-900/50 bg-blue-900/10 text-blue-200 {% endif %}">
+                            {{ message }}
                         </div>
-                        <h3 class="text-xl font-semibold text-white mb-2 group-hover:text-blue-400">Login Portal</h3>
-                        <p class="text-gray-400 text-sm">Access your dashboard, medical records, and appointments securely.</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}
+            <div class="flex flex-col items-center justify-center min-h-[75vh] gap-12">
+                
+                <div class="text-center space-y-6 max-w-4xl">
+                    <h1 class="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
+                        Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Arogya</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-400 font-light max-w-2xl mx-auto">
+                        Treating patients with compassion. <br class="hidden md:block"/> Your health journey starts here.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+                    
+                    <a href="{{ url_for('doctor.doctor_dashboard') }}" class="group relative p-8 bg-gray-900 border border-gray-800 rounded-2xl hover:border-blue-500/50 hover:bg-gray-800/80 transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-black/20">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <h3 class="text-xl font-semibold text-white mb-2 group-hover:text-blue-400 flex items-center gap-2">
+                             Patient/Doctor Login
+                        </h3>
+                        <p class="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300">Access your dashboard, medical records, and appointments securely.</p>
                     </a>
 
-                    <a href="{{ url_for('patient.register') }}" class="group relative p-8 bg-gray-900 border border-gray-800 rounded-2xl hover:border-emerald-500/50 hover:bg-gray-800/80 transition-all duration-300 hover:-translate-y-1 shadow-xl hover:shadow-emerald-900/10 text-left">
-                        <div class="w-12 h-12 bg-emerald-900/30 rounded-lg flex items-center justify-center mb-4 text-emerald-400 group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                        </div>
+                    <a href="{{ url_for('patient.register') }}" class="group relative p-8 bg-gray-900 border border-gray-800 rounded-2xl hover:border-emerald-500/50 hover:bg-gray-800/80 transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-black/20">
+                        <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <h3 class="text-xl font-semibold text-white mb-2 group-hover:text-emerald-400">New Patient?</h3>
-                        <p class="text-gray-400 text-sm">Register here to create your profile and get started with our services.</p>
+                        <p class="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300">Register here to create your profile and get started with our services.</p>
                     </a>
 
-                    <a href="{{ url_for('admin.admin_dashboard') }}" class="group relative p-8 bg-gray-900 border border-gray-800 rounded-2xl hover:border-purple-500/50 hover:bg-gray-800/80 transition-all duration-300 hover:-translate-y-1 shadow-xl hover:shadow-purple-900/10 text-left">
-                        <div class="w-12 h-12 bg-purple-900/30 rounded-lg flex items-center justify-center mb-4 text-purple-400 group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        </div>
+                    <a href="{{ url_for('admin.admin_dashboard') }}" class="group relative p-8 bg-gray-900 border border-gray-800 rounded-2xl hover:border-purple-500/50 hover:bg-gray-800/80 transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-black/20">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <h3 class="text-xl font-semibold text-white mb-2 group-hover:text-purple-400">Admin Dashboard</h3>
-                        <p class="text-gray-400 text-sm">Restricted access area for hospital administration staff only.</p>
+                        <p class="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300">Restricted access area for hospital administration staff only.</p>
                     </a>
+
                 </div>
             </div>
-        </section>
-
-        <section class="py-20 bg-gray-900/50 border-y border-gray-800">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-white mb-4">Our Facilities</h2>
-                    <p class="text-gray-400 max-w-2xl mx-auto">We use the latest technology and medical expertise to provide you with the best care possible.</p>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                    <div class="flex flex-col items-center text-center group">
-                        <div class="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-blue-500 mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-lg">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                        </div>
-                        <h3 class="text-white font-semibold">24/7 Cardiac Care</h3>
-                        <p class="text-gray-500 text-sm mt-2">Emergency heart care available round the clock.</p>
-                    </div>
-
-                    <div class="flex flex-col items-center text-center group">
-                        <div class="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-emerald-500 mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-lg">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                        </div>
-                        <h3 class="text-white font-semibold">Modern OT</h3>
-                        <p class="text-gray-500 text-sm mt-2">Advanced Operation Theaters for complex surgeries.</p>
-                    </div>
-
-                    <div class="flex flex-col items-center text-center group">
-                        <div class="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-purple-500 mb-4 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 shadow-lg">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        </div>
-                        <h3 class="text-white font-semibold">Digital Labs</h3>
-                        <p class="text-gray-500 text-sm mt-2">Instant reports and high-tech diagnostic tools.</p>
-                    </div>
-
-                    <div class="flex flex-col items-center text-center group">
-                        <div class="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-amber-500 mb-4 group-hover:bg-amber-600 group-hover:text-white transition-all duration-300 shadow-lg">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                        </div>
-                        <h3 class="text-white font-semibold">Private Wards</h3>
-                        <p class="text-gray-500 text-sm mt-2">Clean, hygienic, and private rooms for recovery.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-20 px-6">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-                    <div>
-                        <h2 class="text-3xl font-bold text-white mb-2">Meet Our Specialists</h2>
-                        <p class="text-gray-400">Consult with the best medical professionals in the city.</p>
-                    </div>
-                    <a href="{{ url_for('patient.register') }}" class="text-blue-400 hover:text-blue-300 text-sm font-medium flex items-center gap-1 group">
-                        View all doctors <span class="group-hover:translate-x-1 transition-transform">→</span>
-                    </a>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 hover:border-gray-700 transition-colors">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center text-xl font-bold text-white">DS</div>
-                            <div>
-                                <h4 class="text-white font-bold text-lg">Dr. Sarah Smith</h4>
-                                <p class="text-blue-400 text-sm">Cardiology</p>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-4">"Dedicated to providing comprehensive heart care with a focus on preventative measures."</p>
-                        <div class="flex gap-2 text-xs text-gray-500 font-mono">
-                            <span class="bg-gray-800 px-2 py-1 rounded">MBBS</span>
-                            <span class="bg-gray-800 px-2 py-1 rounded">MD</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 hover:border-gray-700 transition-colors">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center text-xl font-bold text-white">RJ</div>
-                            <div>
-                                <h4 class="text-white font-bold text-lg">Dr. Rahul Jain</h4>
-                                <p class="text-blue-400 text-sm">Neurology</p>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-4">"Expert in treating complex neurological disorders with advanced therapies."</p>
-                        <div class="flex gap-2 text-xs text-gray-500 font-mono">
-                            <span class="bg-gray-800 px-2 py-1 rounded">MBBS</span>
-                            <span class="bg-gray-800 px-2 py-1 rounded">DM</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 hover:border-gray-700 transition-colors">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center text-xl font-bold text-white">AP</div>
-                            <div>
-                                <h4 class="text-white font-bold text-lg">Dr. Anjali Patel</h4>
-                                <p class="text-blue-400 text-sm">Pediatrics</p>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-4">"Compassionate care for your little ones, ensuring their healthy growth and development."</p>
-                        <div class="flex gap-2 text-xs text-gray-500 font-mono">
-                            <span class="bg-gray-800 px-2 py-1 rounded">MBBS</span>
-                            <span class="bg-gray-800 px-2 py-1 rounded">DCH</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-20 bg-gray-900 border-t border-gray-800">
-            <div class="max-w-7xl mx-auto px-6">
-                <h2 class="text-3xl font-bold text-center text-white mb-16">What Our Patients Say</h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-gray-950 p-8 rounded-2xl relative">
-                        <svg class="w-8 h-8 text-gray-800 absolute top-6 left-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.353 15.925 15.025 15.088C15.698 14.25 16.637 13.593 17.842 13.118V11.896C17.203 11.963 16.599 12.062 16.03 12.193C15.461 12.324 14.945 12.508 14.482 12.747V7.03C15.82 6.843 17.065 6.996 18.217 7.49C19.37 7.983 20.301 8.877 21.011 10.171C21.602 11.31 21.898 12.793 21.898 14.619V21H14.017ZM6.017 21L6.017 18C6.017 16.896 6.353 15.925 7.025 15.088C7.698 14.25 8.637 13.593 9.842 13.118V11.896C9.203 11.963 8.599 12.062 8.03 12.193C7.461 12.324 6.945 12.508 6.482 12.747V7.03C7.82 6.843 9.065 6.996 10.217 7.49C11.37 7.983 12.301 8.877 13.011 10.171C13.602 11.31 13.898 12.793 13.898 14.619V21H6.017Z"/></svg>
-                        <p class="text-gray-300 mt-8 mb-6 relative z-10">"The staff at Arogya is incredibly supportive. Dr. Jain explained everything clearly and the digital reports made it so easy."</p>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">RK</div>
-                            <div>
-                                <h5 class="text-white font-medium text-sm">Rajesh Kumar</h5>
-                                <p class="text-gray-500 text-xs">Recovered Patient</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-950 p-8 rounded-2xl relative">
-                        <svg class="w-8 h-8 text-gray-800 absolute top-6 left-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.353 15.925 15.025 15.088C15.698 14.25 16.637 13.593 17.842 13.118V11.896C17.203 11.963 16.599 12.062 16.03 12.193C15.461 12.324 14.945 12.508 14.482 12.747V7.03C15.82 6.843 17.065 6.996 18.217 7.49C19.37 7.983 20.301 8.877 21.011 10.171C21.602 11.31 21.898 12.793 21.898 14.619V21H14.017ZM6.017 21L6.017 18C6.017 16.896 6.353 15.925 7.025 15.088C7.698 14.25 8.637 13.593 9.842 13.118V11.896C9.203 11.963 8.599 12.062 8.03 12.193C7.461 12.324 6.945 12.508 6.482 12.747V7.03C7.82 6.843 9.065 6.996 10.217 7.49C11.37 7.983 12.301 8.877 13.011 10.171C13.602 11.31 13.898 12.793 13.898 14.619V21H6.017Z"/></svg>
-                        <p class="text-gray-300 mt-8 mb-6 relative z-10">"I was amazed by how clean and modern the facilities are. Booking an appointment online saved me so much time!"</p>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">SS</div>
-                            <div>
-                                <h5 class="text-white font-medium text-sm">Sunita Sharma</h5>
-                                <p class="text-gray-500 text-xs">Regular Visitor</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-950 p-8 rounded-2xl relative">
-                        <svg class="w-8 h-8 text-gray-800 absolute top-6 left-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.353 15.925 15.025 15.088C15.698 14.25 16.637 13.593 17.842 13.118V11.896C17.203 11.963 16.599 12.062 16.03 12.193C15.461 12.324 14.945 12.508 14.482 12.747V7.03C15.82 6.843 17.065 6.996 18.217 7.49C19.37 7.983 20.301 8.877 21.011 10.171C21.602 11.31 21.898 12.793 21.898 14.619V21H14.017ZM6.017 21L6.017 18C6.017 16.896 6.353 15.925 7.025 15.088C7.698 14.25 8.637 13.593 9.842 13.118V11.896C9.203 11.963 8.599 12.062 8.03 12.193C7.461 12.324 6.945 12.508 6.482 12.747V7.03C7.82 6.843 9.065 6.996 10.217 7.49C11.37 7.983 12.301 8.877 13.011 10.171C13.602 11.31 13.898 12.793 13.898 14.619V21H6.017Z"/></svg>
-                        <p class="text-gray-300 mt-8 mb-6 relative z-10">"Top-notch pediatric care. Dr. Anjali was so gentle with my son. Highly recommended for families."</p>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-xs">AV</div>
-                            <div>
-                                <h5 class="text-white font-medium text-sm">Amit Verma</h5>
-                                <p class="text-gray-500 text-xs">Father of Patient</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+            {% endblock %}
+        </div>
     </main>
 
-    <footer class="bg-gray-950 border-t border-gray-800 pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-            <div>
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xs">A</div>
-                    <span class="text-xl font-bold text-white">Arogya</span>
-                </div>
-                <p class="text-gray-400 text-sm leading-relaxed">Advanced healthcare management system dedicated to providing accessible and efficient medical services to everyone.</p>
-            </div>
-            
-            <div>
-                <h4 class="text-white font-semibold mb-4">Quick Links</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="#" class="hover:text-blue-400 transition-colors">About Us</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition-colors">Our Doctors</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition-colors">Book Appointment</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition-colors">Contact</a></li>
-                </ul>
-            </div>
+    
 
-            <div>
-                <h4 class="text-white font-semibold mb-4">Services</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="#" class="hover:text-blue-400 transition-colors">Emergency Care</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition-colors">Cardiology</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition-colors">Neurology</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition-colors">Pediatrics</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-white font-semibold mb-4">Contact Us</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li>123 Healthcare Ave, MedCity</li>
-                    <li>+91 987 654 3210</li>
-                    <li>support@arogyahospital.com</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="text-center pt-8 border-t border-gray-900">
-            <p class="text-gray-600 text-sm">© 2026 Arogya Hospital. All rights reserved.</p>
-        </div>
+    <footer class="border-t border-gray-800 py-8 text-center">
+        <p class="text-gray-600 text-sm">© 2026 Arogya Hospital. All rights reserved.</p>
     </footer>
 
 </body>
