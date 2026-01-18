@@ -113,7 +113,7 @@ python app.py
 ```
 
 ### Project Structure
-
+```bash
 Directory structure:
 └── sharancreates-hospital-management-system/
     ├── README.md
@@ -162,6 +162,4 @@ Directory structure:
             ├── register.html
             ├── update_patient.html
             └── view_treatment.html
-
-git clone https://github.com/YOUR_USERNAME/arogya-hms.git
-cd arogya-hms
+```
