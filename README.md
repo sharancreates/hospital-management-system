@@ -55,12 +55,11 @@ The application is built with Tailwind CSS, delivering a consistent and responsi
 - **Language:** Python 3.10+
 - **Framework:** Flask
 - **Authentication:** Session-based authentication (Werkzeug Security)
-- **Database:** MongoDB (PyMongo) or SQLAlchemy (configurable)
+- **Database:** SQLAlchemy (configurable)
 
 ### Frontend & UI
 - **Templating Engine:** Jinja2 (Server-Side Rendering)
 - **CSS Framework:** Tailwind CSS
-- **JavaScript:** Vanilla JavaScript (DOM manipulation and async requests)
 
 ---
 
