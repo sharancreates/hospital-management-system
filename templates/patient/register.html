@@ -3,6 +3,8 @@
 {% block title %}Register - Arogya{% endblock %}
 
 {% block css %}
+<link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {% endblock %}
 
 {% block content %}
@@ -15,65 +17,31 @@
       <p class="text-gray-400 text-sm mt-2">Join Arogya today for better healthcare.</p>
     </div>
 
-    <form action="{{ url_for('patient.register') }}" method="POST" id="new_pat" class="p-8 space-y-5">
+    <form action="{{ url_for('patient.register') }}" method="POST" id="new_pat" class="p-8 space-y-5" novalidate>
 
       <div>
         <label for="pat_name" class="block text-sm font-medium text-gray-300 mb-1.5">Full Name</label>
-        <input 
-          type="text" 
-          id="pat_name" 
-          name="pat_name" 
-          required 
-          placeholder="e.g. John Doe"
-          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
-        >
+        <input type="text" id="pat_name" name="pat_name" required placeholder="Full Name" class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all">
       </div>
 
       <div>
         <label for="email" class="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email" 
-          required 
-          placeholder="you@example.com"
-          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
-        >
+        <input type="email" id="email" name="email" required placeholder="you@example.com" class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all">
       </div>
 
       <div>
         <label for="password" class="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          name="password" 
-          required
-          placeholder="Choose a secure password"
-          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
-        >
+        <input type="password" id="password" name="password" required placeholder="Choose a secure password" class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all">
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label for="dob" class="block text-sm font-medium text-gray-300 mb-1.5">Date of Birth</label>
-          <input 
-            type="date" 
-            id="dob" 
-            name="dob" 
-            required
-            class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all [color-scheme:dark]"
-          >
+          <input type="text" id="dob_picker" name="dob" required placeholder="Select Date"  class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all">
         </div>
         <div>
           <label for="age" class="block text-sm font-medium text-gray-300 mb-1.5">Age</label>
-          <input 
-            type="number" 
-            id="age" 
-            name="age" 
-            required 
-            placeholder="30"
-            class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
-          >
+          <input type="number" id="age" name="age" required placeholder="Age(Calculated itself)" readonly class="w-full bg-gray-900 border border-gray-700 text-gray-400 text-sm rounded-lg cursor-not-allowed block p-3 outline-none transition-all">
         </div>
       </div>
 
@@ -102,19 +70,13 @@
              <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
            </div>
            <span class="text-sm text-gray-400 group-hover:text-white transition-colors">Others</span>
-         </label>
+          </label>
         </div>
       </div>
 
       <div>
         <label for="contact_num" class="block text-sm font-medium text-gray-300 mb-1.5">Contact Number</label>
-        <input 
-          type="tel" 
-          id="contact_num" 
-          name="contact_num" 
-          placeholder="84010 XXXXX"
-          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
-        >
+        <input type="tel" id="contact_num" name="contact_num" placeholder="84010 XXXXX" class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all">
       </div>
 
       <div class="pt-2">
@@ -130,4 +92,80 @@
     </form>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+        flatpickr("#dob_picker", {
+        dateFormat: "Y-m-d",
+        theme: "dark",
+        disableMobile: "true", 
+        onChange: function(selectedDates, dateStr, instance) {
+            const ageInput = document.getElementById('age');
+            if (selectedDates[0]) {
+                const dobDate = selectedDates[0];
+                const today = new Date();
+                let age = today.getFullYear() - dobDate.getFullYear();
+                const monthDiff = today.getMonth() - dobDate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
+                    age--;
+                }
+                ageInput.value = age >= 0 ? age : 0;
+            }
+        }
+    });
+    const dobInput = document.getElementById('dob');
+    const ageInput = document.getElementById('age');
+
+    dobInput.addEventListener('change', function() {
+        const dobValue = this.value;
+        if (dobValue) {
+            const dobDate = new Date(dobValue);
+            const today = new Date();
+            
+            let age = today.getFullYear() - dobDate.getFullYear();
+            const monthDiff = today.getMonth() - dobDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
+                age--;
+            }
+            
+            ageInput.value = age >= 0 ? age : 0;
+        }
+    });
+
+    const form = document.getElementById('new_pat');
+
+    form.addEventListener('submit', function(event) {
+        let isValid = true;
+        let errorMessage = "";
+
+        const email = document.getElementById('email');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.value)) {
+            errorMessage += "• Please enter a valid email address.\n";
+            isValid = false;
+        }
+
+        const password = document.getElementById('password');
+        if (password.value.length < 6) {
+            errorMessage += "• Password must be at least 6 characters long.\n";
+            isValid = false;
+        }
+
+        const phone = document.getElementById('contact_num');
+        const cleanPhone = phone.value.replace(/\D/g, ''); 
+        
+        if (cleanPhone.length !== 10) {
+            errorMessage += "• Contact number must be exactly 10 digits.\n";
+            isValid = false;
+        }
+
+        if (!isValid) {
+            event.preventDefault(); 
+            alert("Please correct the following errors:\n\n" + errorMessage);
+        }
+    });
+});
+</script>
 {% endblock %}
