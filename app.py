@@ -29,6 +29,14 @@ def create_app():
 
     register_bp(app)
 
+    @app.route('/init-db')
+    def init_db():
+        try:
+            db.create_all()
+            return "<h1>Success: Database tables created!</h1>"
+        except Exception as e:
+            return f"<h1>Error: {str(e)}</h1>"
+
     return app
 
 app = create_app()
