@@ -37,7 +37,15 @@
                     {% for app in appointment %}
                     <tr class="hover:bg-gray-800/50 transition-colors">
                         <td class="px-6 py-4 font-mono text-gray-500">#{{ app.appointment_id }}</td>
-                        <td class="px-6 py-4 font-medium text-white">{{ app.doctor.doc_name }}</td>
+                        
+                        <td class="px-6 py-4 font-medium text-white">
+                            {% if app.doctor %}
+                                {{ app.doctor.doc_name }}
+                            {% else %}
+                                <span class="text-gray-500 italic">Unknown</span>
+                            {% endif %}
+                        </td>
+
                         <td class="px-6 py-4">{{ app.date.strftime('%d-%m-%Y') }}</td>
                         <td class="px-6 py-4">{{ app.time.strftime('%H:%M') }}</td>
                         
@@ -49,6 +57,10 @@
                             {% elif app.status == 'Completed' %}
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-900/30 text-emerald-300 border border-emerald-800/50">
                                     <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full"></span> Completed
+                                </span>
+                            {% elif app.status == 'Cancelled' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-900/30 text-red-300 border border-red-800/50">
+                                    <span class="w-1.5 h-1.5 mr-1.5 bg-red-400 rounded-full"></span> Cancelled
                                 </span>
                             {% else %}
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-gray-300 border border-gray-700">
@@ -65,7 +77,7 @@
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </a>
                             {% else %}
-                            <span class="text-gray-600 italic">-</span>
+                            <span class="text-gray-600 italic text-xs">-</span>
                             {% endif %}
                         </td>
                     </tr>
@@ -75,7 +87,7 @@
                             <div class="flex flex-col items-center justify-center text-gray-500">
                                 <svg class="w-12 h-12 mb-3 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 <p class="text-base font-medium">No medical history found</p>
-                                <p class="text-sm">This patient has no completed appointments yet.</p>
+                                <p class="text-sm">This patient has no appointments on record.</p>
                             </div>
                         </td>
                     </tr>

@@ -38,11 +38,15 @@
                     <tr class="hover:bg-gray-800/50 transition-colors">
                         <td class="px-6 py-4 font-mono text-gray-500">#{{ app.appointment_id }}</td>
                         <td class="px-6 py-4">
+                            {% if app.patient %}
                             <a href="{{ url_for('doctor.patient_history', patient_id=app.patient.patient_id) }}" 
                                class="font-medium text-blue-400 hover:text-blue-300 hover:underline transition-colors flex items-center gap-1">
                                 {{ app.patient.pat_name }}
                                 <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                             </a>
+                            {% else %}
+                            <span class="text-gray-500 italic">Unknown Patient</span>
+                            {% endif %}
                         </td>
                         <td class="px-6 py-4">{{ app.date.strftime('%d-%m-%Y') }}</td>
                         <td class="px-6 py-4">{{ app.time.strftime('%H:%M') }}</td>
@@ -54,6 +58,10 @@
                             {% elif app.status == 'Completed' %}
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-900/30 text-emerald-300 border border-emerald-800/50">
                                     <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full"></span> Completed
+                                </span>
+                            {% elif app.status == 'Cancelled' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-900/30 text-red-300 border border-red-800/50">
+                                    <span class="w-1.5 h-1.5 mr-1.5 bg-red-400 rounded-full"></span> Cancelled
                                 </span>
                             {% else %}
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-gray-300 border border-gray-700">
@@ -67,6 +75,8 @@
                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
                                     View Details
                                 </a>
+                            {% elif app.status == 'Cancelled' %}
+                                <span class="text-gray-600 text-xs">-</span>
                             {% else %}
                                 <a href="{{ url_for('doctor.add_treatment', appointment_id=app.appointment_id) }}" 
                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-500 shadow-lg shadow-blue-500/20 transition-all">
@@ -77,7 +87,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-gray-500 italic">No appointments found for today.</td>
+                        <td colspan="6" class="px-6 py-8 text-center text-gray-500 italic">No appointments found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -100,7 +110,7 @@
                         <th class="px-6 py-4 font-medium">ID</th>
                         <th class="px-6 py-4 font-medium">Name</th>
                         <th class="px-6 py-4 font-medium">Gender</th>
-                        <th class="px-6 py-4 font-medium">Date of Birth</th>
+                        <th class="px-6 py-4 font-medium">DOB</th>
                         <th class="px-6 py-4 font-medium">Age</th>
                         <th class="px-6 py-4 font-medium">Contact Number</th>
                     </tr>

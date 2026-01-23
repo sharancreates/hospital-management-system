@@ -1,176 +1,206 @@
-from flask import Flask, Blueprint, request, flash, redirect, url_for, render_template
+from flask import Blueprint, request, flash, redirect, url_for, render_template, abort
 from models import Patient, User, Doctor, Department, Appointment, Treatment, Availability
-from datetime import datetime
+from forms import PatientRegistrationForm, PatientUpdateForm
+from datetime import datetime, date
 from extensions import db
 from flask_login import current_user, login_required
 from werkzeug.security import generate_password_hash
 
-TIME_SLOTS = {
-    "1": "9AM TO 11AM",
-    "2": "11AM TO 1PM",
-    "3": "1PM TO 3PM",
-    "4": "3PM TO 5PM",
-    "5": "5PM TO 7PM",
-    "6": "7PM TO 9PM"
-}
-
 patient_bp = Blueprint('patient', __name__, url_prefix='/patient')
 
-@patient_bp.route('/register', methods = ['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        name = request.form['pat_name']
-        gender = request.form['gender']
-        contact = request.form['contact_num']
-        dob_str = request.form['dob']
-        dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
-        email = request.form['email']
-        password = request.form['password']
-        age = request.form['age']
-        hashed_pw = generate_password_hash(password)
+MAX_APPOINTMENTS_PER_SLOT = 10
 
-        if User.query.filter_by(email = email).first():
+# Helper to ensure security
+def get_current_patient():
+    """Retrieves the Patient record linked to the current logged-in User."""
+    return Patient.query.filter_by(user_id=current_user.user_id).first()
+
+@patient_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('patient.patient_dashboard'))
+
+    form = PatientRegistrationForm()
+    if form.validate_on_submit():
+        # Check if email exists
+        if User.query.filter_by(email=form.email.data).first():
             flash("Email already exists.", "danger")
             return redirect(url_for('patient.register'))
 
-        user = User(
-            email = email,
-            password_hash = hashed_pw,
-            role = 'patient'
-        )
-        db.session.add(user)
-        db.session.commit()
+        try:
+            # 1. Create User
+            hashed_pw = generate_password_hash(form.password.data)
+            user = User(
+                email=form.email.data,
+                password_hash=hashed_pw,
+                role='patient'
+            )
+            db.session.add(user)
+            db.session.flush()  # Generates user_id without committing yet
 
-        patient = Patient(
-            pat_name = name,
-            gender = gender,
-            dob = dob,
-            contact_num = contact,
-            user_id = user.user_id,
-            age = age
-        )
-        db.session.add(patient)
-        db.session.commit()
-        return redirect(url_for('patient.patient_dashboard', patient_id = patient.patient_id))
-    
-    return render_template('patient/register.html')
-        
+            # 2. Create Patient
+            patient = Patient(
+                pat_name=form.pat_name.data,
+                gender=form.gender.data,
+                dob=form.dob.data,
+                contact_num=form.contact_num.data,
+                age=form.age.data,
+                user_id=user.user_id
+            )
+            db.session.add(patient)
+            
+            # 3. Commit both securely
+            db.session.commit()
+            
+            flash('Registration successful! Please login.', 'success')
+            return redirect(url_for('auth.login'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error during registration: {str(e)}', 'danger')
+
+    return render_template('patient/register.html', form=form)
+
 @patient_bp.route('/dashboard')
 @login_required
 def patient_dashboard():
-    patient = Patient.query.filter_by(user_id=current_user.user_id).first_or_404()
+    patient = get_current_patient()
+    if not patient:
+        flash('Patient profile not found.', 'danger')
+        return redirect(url_for('index'))
+
+    # Fetch appointments for THIS patient only
+    appointments = Appointment.query.filter_by(patient_id=patient.patient_id).order_by(Appointment.date.desc()).all()
     docs = Doctor.query.all()
-    department = Department.query.all()
-    pat_id = patient.patient_id
-    appointment = Appointment.query.filter_by(patient_id = patient.patient_id).all()
-    #appointments = Appointment.query.filter_by(doctor_id=doctor.doctor_id).order_by(Appointment.date.desc(), Appointment.time.desc()).all()
-    return render_template('patient/dashboard.html', patient = patient, docs = docs, appointment=appointment, department=department)
+    departments = Department.query.all()
+    
+    return render_template('patient/dashboard.html', 
+                           patient=patient, 
+                           docs=docs, 
+                           appointment=appointments, 
+                           department=departments)
 
-@patient_bp.route('update_patient/<int:patient_id>', methods = ['POST', 'GET'])
-def update_patient(patient_id):
-    patient = Patient.query.get_or_404(patient_id)
+@patient_bp.route('/update_patient', methods=['GET', 'POST'])
+@login_required
+def update_patient():
+    # SECURITY FIX: Don't take patient_id from URL. Use the logged-in user.
+    patient = get_current_patient()
+    if not patient:
+        return abort(403)
 
-    if request.method == 'POST':
-        patient.pat_name = request.form['pat-name']
-        patient.gender = request.form['gender']
-        patient.contact_num = request.form['contact_num']
-        dob_str = request.form['dob']
-        patient.dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
-        patient.age = request.form['age']
-            
+    form = PatientUpdateForm(obj=patient)
+
+    if form.validate_on_submit():
+        patient.pat_name = form.pat_name.data
+        patient.gender = form.gender.data
+        patient.contact_num = form.contact_num.data
+        patient.dob = form.dob.data
+        patient.age = form.age.data
+        
         db.session.commit()
+        flash('Profile updated successfully.', 'success')
         return redirect(url_for('patient.patient_dashboard'))
 
-    return render_template('patient/update_patient.html', patient = patient)
+    return render_template('patient/update_patient.html', form=form, patient=patient)
 
 @patient_bp.route('/treatment/<int:treatment_id>')
+@login_required
 def view_treatment(treatment_id):
     treatment = Treatment.query.get_or_404(treatment_id)
     appointment = treatment.appointment
+    
+    # SECURITY FIX: Ensure the treatment belongs to the logged-in patient
+    current_pat = get_current_patient()
+    if not appointment or appointment.patient_id != current_pat.patient_id:
+        abort(403)  # Forbidden
 
-    doctor = appointment.doctor if appointment else None
-    patient = appointment.patient if appointment else None
+    doctor = appointment.doctor
+    patient = appointment.patient
 
-    return render_template(
-        'patient/view_treatment.html',
-        app=appointment,
-        treatment=treatment,
-        doctor=doctor,
-        patient=patient
-    )
-
-MAX_APPOINTMENTS_PER_SLOT = 10
+    return render_template('patient/view_treatment.html', 
+                           app=appointment, 
+                           treatment=treatment, 
+                           doctor=doctor, 
+                           patient=patient)
 
 @patient_bp.route("/add_appointment", methods=["GET", "POST"])
 @login_required
 def add_appointment():
-    patient = Patient.query.filter_by(user_id=current_user.user_id).first_or_404()
+    patient = get_current_patient()
     doctors = Doctor.query.all()
 
+    # We use request.form here for the filtering logic (Step 1)
+    # Ideally, this should be AJAX, but keeping your structure:
     selected_doctor = request.form.get("doc")
     selected_date = request.form.get("date")
     selected_slot = request.form.get("slot")
-
+    
     available_slots = []
 
-    if selected_doctor and selected_date and not selected_slot:
-        date_obj = datetime.strptime(selected_date, "%Y-%m-%d").date()
-
-        all_slots = Availability.query.filter_by(
-            doctor_id=selected_doctor,
-            date=date_obj
-        ).order_by(Availability.start_time).all()
-
-        for s in all_slots:
-            booked_count = Appointment.query.filter_by(
-                doctor_id=selected_doctor,
-                date=date_obj,
-                time=s.start_time
-            ).count()
-            
-            if booked_count < MAX_APPOINTMENTS_PER_SLOT:
-                available_slots.append(s)
-
-        if not available_slots:
-            flash("No available slots for this doctor on the selected date.", "warning")
-
-    if selected_doctor and selected_date and selected_slot:
-        date_obj = datetime.strptime(selected_date, "%Y-%m-%d").date()
-        slot = Availability.query.get(selected_slot)
-
-        booked_count = Appointment.query.filter_by(
-            doctor_id=selected_doctor,
-            date=date_obj,
-            time=slot.start_time
-        ).count()
-
-        if booked_count >= MAX_APPOINTMENTS_PER_SLOT:
-            flash("This time slot is fully booked. Please select another slot.", "danger")
-            return redirect(url_for("patient.add_appointment"))
-
-        new_token_number = booked_count + 1 
-
-        new_appointment = Appointment(
-            patient_id=patient.patient_id,
-            doctor_id=selected_doctor,
-            date=date_obj,
-            time=slot.start_time,
-            status="booked",
-            token_number=new_token_number 
-        )
-        
+    # STEP 1: User selected Doctor & Date -> Show Slots
+    if selected_doctor and selected_date:
         try:
-            db.session.add(new_appointment)
-            db.session.commit()
-            flash(f"Appointment booked successfully! Your Token Number is {new_token_number}.", "success")
-            return redirect(url_for("patient.patient_dashboard"))
-            
+            date_obj = datetime.strptime(selected_date, "%Y-%m-%d").date()
+            if date_obj < date.today():
+                 flash("Cannot book appointments in the past.", "warning")
+            else:
+                all_slots = Availability.query.filter_by(
+                    doctor_id=selected_doctor,
+                    date=date_obj
+                ).order_by(Availability.start_time).all()
+
+                for s in all_slots:
+                    booked_count = Appointment.query.filter_by(
+                        doctor_id=selected_doctor,
+                        date=date_obj,
+                        time=s.start_time
+                    ).filter(Appointment.status != 'Cancelled').count() # Ignore cancelled slots
+                    
+                    if booked_count < MAX_APPOINTMENTS_PER_SLOT:
+                        available_slots.append(s)
+
+                if not available_slots:
+                    flash("No available slots for this doctor on the selected date.", "warning")
+        except ValueError:
+            flash("Invalid date format.", "danger")
+
+    # STEP 2: User selected Slot -> Book Appointment
+    if request.method == 'POST' and selected_doctor and selected_date and selected_slot:
+        try:
+            date_obj = datetime.strptime(selected_date, "%Y-%m-%d").date()
+            slot = Availability.query.get(selected_slot) # Validating slot existence
+
+            if not slot or str(slot.doctor_id) != str(selected_doctor):
+                 flash("Invalid slot selection.", "danger")
+                 return redirect(url_for("patient.add_appointment"))
+
+            # Re-check availability before booking (Race condition check)
+            current_count = Appointment.query.filter_by(
+                doctor_id=selected_doctor, 
+                date=date_obj, 
+                time=slot.start_time
+            ).filter(Appointment.status != 'Cancelled').count()
+
+            if current_count >= MAX_APPOINTMENTS_PER_SLOT:
+                flash("Slot filled up just now! Please pick another.", "danger")
+            else:
+                new_token = current_count + 1
+                new_app = Appointment(
+                    patient_id=patient.patient_id,
+                    doctor_id=selected_doctor,
+                    date=date_obj,
+                    time=slot.start_time,
+                    status="Booked",
+                    token_number=new_token
+                )
+                db.session.add(new_app)
+                db.session.commit()
+                flash(f"Appointment Booked! Token: {new_token}", "success")
+                return redirect(url_for("patient.patient_dashboard"))
+
         except Exception as e:
             db.session.rollback()
-            flash("An error occurred while booking. Please try again.", "danger")
-            print(f"Error booking appointment: {e}")
-            return redirect(url_for("patient.add_appointment"))
-
+            flash(f"Error booking appointment: {str(e)}", "danger")
 
     return render_template(
         "patient/add_appointment.html",
@@ -181,15 +211,47 @@ def add_appointment():
         selected_date=selected_date
     )
 
-@patient_bp.route('/cancel_appointment/<int:appointment_id>')
+@patient_bp.route('/cancel_appointment/<int:appointment_id>', methods=['POST'])
 @login_required
 def cancel_appointment(appointment_id):
     app = Appointment.query.get_or_404(appointment_id)
-    db.session.delete(app)
+    
+    # SECURITY FIX: Ownership Check
+    current_pat = get_current_patient()
+    if app.patient_id != current_pat.patient_id:
+        abort(403)
+
+    # Better Practice: Change status instead of deleting record
+    app.status = 'Cancelled'
+    # If you really want to delete: db.session.delete(app)
+    
     db.session.commit()
+    flash('Appointment cancelled.', 'info')
     return redirect(url_for('patient.patient_dashboard'))
 
 @patient_bp.route('/doc_profile/<int:doctor_id>')
+@login_required
 def doc_profile(doctor_id):
     doctor = Doctor.query.get_or_404(doctor_id)
-    return render_template("patient/doctor_profile.html", doctor = doctor)
+    
+    # 1. Fetch all future availability slots for this doctor
+    all_slots = Availability.query.filter(
+        Availability.doctor_id == doctor_id,
+        Availability.date >= date.today()
+    ).order_by(Availability.date, Availability.start_time).all()
+
+    free_slots = []
+
+    # 2. Filter logic: Check if the slot is full
+    for slot in all_slots:
+        booked_count = Appointment.query.filter_by(
+            doctor_id=doctor_id,
+            date=slot.date,
+            time=slot.start_time
+        ).filter(Appointment.status != 'Cancelled').count()
+
+        # If booking count is less than limit, it's a free slot
+        if booked_count < MAX_APPOINTMENTS_PER_SLOT:
+            free_slots.append(slot)
+
+    return render_template("patient/doctor_profile.html", doctor=doctor, free_slots=free_slots)

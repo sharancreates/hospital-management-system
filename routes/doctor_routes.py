@@ -1,69 +1,90 @@
-from flask import Flask, Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from models import Doctor, Patient, Treatment, Appointment, Availability
+from forms import TreatmentForm, AvailabilityForm
 from flask_login import login_required, current_user
 from extensions import db
 from datetime import datetime, date
-from datetime import date as dt_date 
 
 doctor_bp = Blueprint('doctor', __name__, url_prefix='/doctor')
 
 @doctor_bp.route('/dashboard')
 @login_required
 def doctor_dashboard():
-    doctor = Doctor.query.filter_by(user_id=current_user.user_id).first_or_404()
-    patient = Patient.query.all()
-    appointments = Appointment.query.filter_by(doctor_id=doctor.doctor_id).order_by(Appointment.date.desc(), Appointment.time.desc()).all()
-    return render_template('doctor/dashboard.html', doctor = doctor, appointments = appointments, pats=patient)
+    # Ensure the current user is actually a doctor
+    if current_user.role != 'doctor':
+        flash('Access denied.', 'danger')
+        return redirect(url_for('index')) # or wherever you want non-doctors to go
 
-@doctor_bp.route('/add_treatment/<int:appointment_id>', methods = ['POST', 'GET'])
+    doctor = Doctor.query.filter_by(user_id=current_user.user_id).first_or_404()
+    
+    # In a real app, you might want to filter patients related to this doctor only
+    patient = Patient.query.all()
+    
+    appointments = Appointment.query.filter_by(doctor_id=doctor.doctor_id).order_by(
+        Appointment.date.desc(), Appointment.time.desc()
+    ).all()
+    
+    return render_template('doctor/dashboard.html', doctor=doctor, appointments=appointments, pats=patient)
+
+@doctor_bp.route('/add_treatment/<int:appointment_id>', methods=['POST', 'GET'])
 @login_required
 def add_treatment(appointment_id):
     appointment = Appointment.query.get_or_404(appointment_id)
-    doctor = appointment.doctor 
-    patient = appointment.patient
+    form = TreatmentForm()
+    
+    # Verify the logged-in doctor owns this appointment
+    doctor_record = Doctor.query.filter_by(user_id=current_user.user_id).first()
+    if appointment.doctor_id != doctor_record.doctor_id:
+        flash('You are not authorized to treat this appointment.', 'danger')
+        return redirect(url_for('doctor.doctor_dashboard'))
 
-    if request.method == 'POST':
-        ailment = request.form['ailment']
-        prescription = request.form['prescription']
-        notes = request.form['notes']
-
+    if form.validate_on_submit():
         treatment = Treatment(
-            ailment = ailment,
-            prescription = prescription,
-            notes = notes,
-            appointment_id = appointment_id
+            ailment=form.ailment.data,
+            prescription=form.prescription.data,
+            notes=form.notes.data,
+            appointment_id=appointment_id
         )
         
         appointment.status = "Completed"
         db.session.add(treatment)
         db.session.commit()
+        
+        flash('Treatment added successfully.', 'success')
         return redirect(url_for('doctor.doctor_dashboard'))
-    return render_template('doctor/treatment.html', doctor = doctor, patient = patient, app = appointment)                  
+        
+    return render_template('doctor/treatment.html', form=form, doctor=appointment.doctor, patient=appointment.patient, app=appointment)
 
 @doctor_bp.route('/view_treatment/<int:appointment_id>')
 @login_required
 def view_treatment(appointment_id):
     appointment = Appointment.query.get_or_404(appointment_id)
-    doctor = appointment.doctor
-    patient = appointment.patient
-
-    treatment = Treatment.query.filter_by(appointment_id = appointment_id).all()
-    return render_template('doctor/view_treatment.html', doctor=doctor, patient=patient, app=appointment, treatment = treatment)
+    # Using .first() is safer if you expect one treatment per appointment, 
+    # but if multiple are allowed, keep .all() and loop in template.
+    treatments = Treatment.query.filter_by(appointment_id=appointment_id).all()
+    
+    return render_template('doctor/view_treatment.html', 
+                           doctor=appointment.doctor, 
+                           patient=appointment.patient, 
+                           app=appointment, 
+                           treatment=treatments)
 
 @doctor_bp.route('/patient_history/<int:patient_id>')
 @login_required
 def patient_history(patient_id):
     patient = Patient.query.get_or_404(patient_id)
-    appointment = Appointment.query.filter_by(patient_id = patient_id).order_by(Appointment.date.desc()).all()
+    appointments = Appointment.query.filter_by(patient_id=patient_id).order_by(Appointment.date.desc()).all()
 
-    return render_template('doctor/patient_history.html',patient=patient,appointment=appointment)
+    return render_template('doctor/patient_history.html', patient=patient, appointment=appointments)
 
-
-@doctor_bp.route('/<int:doctor_id>/set_availability', methods=['GET', 'POST'])
+@doctor_bp.route('/set_availability', methods=['GET', 'POST'])
 @login_required
-def set_availability(doctor_id):
-    doctor = Doctor.query.get_or_404(doctor_id)
+def set_availability():
+    # Fetch the doctor profile for the current user
+    doctor = Doctor.query.filter_by(user_id=current_user.user_id).first_or_404()
+    form = AvailabilityForm()
 
+    # Time slot mapping logic
     TIME_SLOTS = {
         "09:00": "11:00",
         "11:00": "13:00",
@@ -73,56 +94,59 @@ def set_availability(doctor_id):
         "19:00": "21:00"
     }
 
-    if request.method == 'POST':
-        selected_date_str = request.form.get("date")
-        selected_start = request.form.get("time")
+    if form.validate_on_submit():
+        selected_date = form.date.data
+        start_time_str = form.time_slot.data
+        
+        # Convert times
+        start_time_obj = datetime.strptime(start_time_str, "%H:%M").time()
+        end_time_str = TIME_SLOTS[start_time_str]
+        end_time_obj = datetime.strptime(end_time_str, "%H:%M").time()
 
-        # Convert date string → Python date
-        selected_date = datetime.strptime(selected_date_str, "%Y-%m-%d").date()
-
-        # Convert string → Python time
-        start_time_obj = datetime.strptime(selected_start, "%H:%M").time()
-        end_time_obj = datetime.strptime(TIME_SLOTS[selected_start], "%H:%M").time()
-
-        # Prevent duplicate slot
+        # Check for duplicates
         exists = Availability.query.filter_by(
-            doctor_id=doctor_id,
+            doctor_id=doctor.doctor_id,
             date=selected_date,
             start_time=start_time_obj
         ).first()
 
         if exists:
-            flash("This slot already exists!", "warning")
-            return redirect(request.url)
+            flash("This time slot is already set.", "warning")
+        else:
+            new_slot = Availability(
+                doctor_id=doctor.doctor_id,
+                date=selected_date,
+                start_time=start_time_obj,
+                end_time=end_time_obj
+            )
+            db.session.add(new_slot)
+            db.session.commit()
+            flash("Availability added!", "success")
+            return redirect(url_for('doctor.set_availability'))
 
-        new_slot = Availability(
-            doctor_id=doctor_id,
-            date=selected_date,
-            start_time=start_time_obj,
-            end_time=end_time_obj
-        )
-
-        db.session.add(new_slot)
-        db.session.commit()
-
-        flash("Availability added!", "success")
-        return redirect(request.url)
-
-    slots = Availability.query.filter_by(doctor_id=doctor_id).all()
+    # Show existing slots
+    slots = Availability.query.filter_by(doctor_id=doctor.doctor_id).order_by(Availability.date, Availability.start_time).all()
 
     return render_template(
         'doctor/set_availability.html',
+        form=form,
         doctor=doctor,
         slots=slots,
-        TIME_SLOTS=TIME_SLOTS,
         today=date.today().isoformat()
     )
 
-@doctor_bp.route('/remove_slot/<int:slot_id>')
+@doctor_bp.route('/remove_slot/<int:slot_id>', methods=['POST'])
 @login_required
 def remove_slot(slot_id):
     slot = Availability.query.get_or_404(slot_id)
+    
+    # Security: Ensure the doctor deleting the slot actually owns it
+    doctor_record = Doctor.query.filter_by(user_id=current_user.user_id).first()
+    if not doctor_record or slot.doctor_id != doctor_record.doctor_id:
+        flash("Unauthorized action.", "danger")
+        return redirect(url_for('doctor.doctor_dashboard'))
+
     db.session.delete(slot)
     db.session.commit()
     flash("Slot removed successfully!", "success")
-    return redirect(url_for('doctor.set_availability', doctor_id=slot.doctor_id))
+    return redirect(url_for('doctor.set_availability'))

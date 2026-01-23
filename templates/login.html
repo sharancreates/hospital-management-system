@@ -2,9 +2,6 @@
 
 {% block title %}Sign In - Arogya{% endblock %}
 
-{% block css %}
-{% endblock %}
-
 {% block content %}
 <div class="flex items-center justify-center min-h-[calc(100vh-200px)]">
     
@@ -16,36 +13,27 @@
         </div>
 
         <form class="space-y-6" action="{{ url_for('auth.login') }}" method="POST">
+            {{ form.hidden_tag() }}
             
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email address</label>
-                <input 
-                    id="email" 
-                    name="email" 
-                    type="email" 
-                    autocomplete="email" 
-                    required 
-                    class="w-full bg-gray-950 border border-gray-800 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 transition-all outline-none"
-                    placeholder="Enter your email"
-                >
+                {{ form.email.label(class="block text-sm font-medium text-gray-300 mb-2") }}
+                {{ form.email(class="w-full bg-gray-950 border border-gray-800 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 transition-all outline-none", placeholder="Enter your email") }}
+                {% for error in form.email.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
             </div>
 
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
-                <input 
-                    id="password" 
-                    name="password" 
-                    type="password" 
-                    autocomplete="current-password" 
-                    required
-                    class="w-full bg-gray-950 border border-gray-800 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 transition-all outline-none" 
-                    placeholder="Enter your password"
-                >
+                {{ form.password.label(class="block text-sm font-medium text-gray-300 mb-2") }}
+                {{ form.password(class="w-full bg-gray-950 border border-gray-800 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 transition-all outline-none", placeholder="Enter your password") }}
+                {% for error in form.password.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
             </div>
 
-            <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-800 font-semibold rounded-lg text-sm px-5 py-3 text-center transition-all shadow-lg hover:shadow-blue-500/20">
-                Sign In
-            </button>
+            <div>
+                {{ form.submit(class="w-full text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-800 font-semibold rounded-lg text-sm px-5 py-3 text-center transition-all shadow-lg hover:shadow-blue-500/20 cursor-pointer") }}
+            </div>
 
             <div class="text-center text-sm text-gray-400 mt-6">
                 <p>Or go back to <a href="{{ url_for('index') }}" class="font-medium text-blue-400 hover:text-blue-300 hover:underline transition-colors">Home Page</a></p>

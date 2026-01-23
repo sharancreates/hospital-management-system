@@ -7,11 +7,14 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from routes import register_bp
+from flask_wtf.csrf import CSRFProtect
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)  
     db.init_app(app)
+    csrf = CSRFProtect()
+    csrf.init_app(app)
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'

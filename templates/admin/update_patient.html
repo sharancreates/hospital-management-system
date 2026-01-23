@@ -12,43 +12,71 @@
       <p class="text-gray-400 text-sm mt-1">Edit the personal details for this patient.</p>
     </div>
 
-    <form action="{{ url_for('admin.update_patient', patient_id=patient.patient_id) }}" method="POST" id="update_pat" class="p-8 space-y-6">
+    <form action="{{ url_for('admin.update_patient', patient_id=patient.patient_id) }}" method="POST" class="p-8 space-y-6">
+      
+      {{ form.hidden_tag() }}
 
       <div>
-        <label for="pat_name" class="block text-sm font-medium text-gray-300 mb-2">Name of the Patient</label>
-        <input 
-          type="text" 
-          id="pat_name" 
-          name="pat_name" 
-          required 
-          value="{{ patient.pat_name }}"
-          class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all"
-        >
+        {{ form.pat_name.label(class="block text-sm font-medium text-gray-300 mb-2") }}
+        {{ form.pat_name(class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all") }}
+        {% for error in form.pat_name.errors %}
+          <p class="mt-1 text-sm text-red-500">{{ error }}</p>
+        {% endfor %}
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-3">Gender</label>
+        {{ form.gender.label(class="block text-sm font-medium text-gray-300 mb-3") }}
         <div class="flex gap-6">
-          <label class="flex items-center gap-3 cursor-pointer group">
-            <div class="relative flex items-center">
-              <input 
-                type="radio" 
-                name="gender" 
-                id="gfemale" 
-                value="female" 
-                {% if patient and patient.gender=='female' %}checked{% endif %}
-                class="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-gray-600 checked:border-blue-500 checked:bg-blue-600 transition-all"
-              >
-              <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
-            </div>
-            <span class="text-gray-300 group-hover:text-white transition-colors">Female</span>
-          </label>
+            {% for subfield in form.gender %}
+            <label class="flex items-center gap-3 cursor-pointer group">
+                <div class="relative flex items-center">
+                    {{ subfield(class="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-gray-600 checked:border-blue-500 checked:bg-blue-600 transition-all") }}
+                    <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                </div>
+                <span class="text-gray-300 group-hover:text-white transition-colors">{{ subfield.label.text }}</span>
+            </label>
+            {% endfor %}
+        </div>
+        {% for error in form.gender.errors %}
+          <p class="mt-1 text-sm text-red-500">{{ error }}</p>
+        {% endfor %}
+      </div>
 
-          <label class="flex items-center gap-3 cursor-pointer group">
-             <div class="relative flex items-center">
-              <input 
-                type="radio" 
-                name="gender" 
-                id="gmale" 
-                value="male" 
-                {% if patient and patient.gender=='male' %}checked{% endif %}
+      <div>
+        {{ form.contact_num.label(class="block text-sm font-medium text-gray-300 mb-2") }}
+        {{ form.contact_num(class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all") }}
+        {% for error in form.contact_num.errors %}
+          <p class="mt-1 text-sm text-red-500">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+          <div>
+            {{ form.dob.label(class="block text-sm font-medium text-gray-300 mb-2") }}
+            {{ form.dob(class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all [color-scheme:dark]", type="date") }}
+            {% for error in form.dob.errors %}
+              <p class="mt-1 text-sm text-red-500">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <div>
+            {{ form.age.label(class="block text-sm font-medium text-gray-300 mb-2") }}
+            {{ form.age(class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all") }}
+            {% for error in form.age.errors %}
+              <p class="mt-1 text-sm text-red-500">{{ error }}</p>
+            {% endfor %}
+          </div>
+      </div>
+
+      <div class="pt-4 flex gap-4">
+        {{ form.submit(class="flex-1 text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-800 font-bold rounded-lg text-sm px-5 py-3.5 text-center shadow-lg hover:shadow-blue-500/20 transition-all cursor-pointer", value="Update Patient") }}
+        
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="flex-1 text-gray-300 bg-gray-800 hover:bg-gray-700 hover:text-white font-medium rounded-lg text-sm px-5 py-3.5 text-center transition-all border border-gray-700">
+            Cancel
+        </a>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

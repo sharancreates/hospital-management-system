@@ -38,7 +38,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wide">Date</p>
-                    <p class="text-sm font-semibold text-white">{{ app.date }}</p>
+                    <p class="text-sm font-semibold text-white">{{ app.date.strftime('%d-%m-%Y') }}</p>
                 </div>
             </div>
 
@@ -48,7 +48,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-gray-500 uppercase tracking-wide">Time</p>
-                    <p class="text-sm font-semibold text-white">{{ app.time }}</p>
+                    <p class="text-sm font-semibold text-white">{{ app.time.strftime('%H:%M') }}</p>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="p-5 flex-grow">
                     <div class="text-gray-200 text-base leading-relaxed whitespace-pre-line pl-4 border-l-2 border-blue-500/50">
-                        {{ treatment.prescription }}
+{{ treatment.prescription }}
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@
                 </div>
                 <div class="p-5 flex-grow">
                     <div class="text-gray-400 text-base leading-relaxed whitespace-pre-line italic">
-                        {{ treatment.notes }}
+{{ treatment.notes }}
                     </div>
                 </div>
             </div>
