@@ -27,7 +27,7 @@ class Doctor(db.Model):
     dob = db.Column(db.Date, nullable = False)
     contact_num = db.Column(db.String(15), nullable = False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
-    specialization = db.Column(db.String(80), db.ForeignKey('department.department_id'))
+    department_id = db.Column(db.String(80), db.ForeignKey('department.department_id'))
 
    # appointments = db.relationship('Appointment', backref = 'doctor', lazy = True)
     user = db.relationship('User', back_populates='doctor')

@@ -43,7 +43,7 @@ def add_doctor():
                 gender=form.gender.data,
                 dob=form.dob.data,
                 contact_num=form.contact_num.data,
-                specialization=form.specialization.data, 
+                department_id=form.specialization.data, 
                 user_id=user.user_id
             )
             
@@ -91,8 +91,6 @@ def delete_doctor(doctor_id):
     return redirect(url_for('admin.admin_dashboard'))
 
 
-# ---------------- PATIENT MANAGEMENT ----------------
-
 @admin_bp.route('/update_patient/<int:patient_id>', methods=['GET', 'POST'])
 @login_required
 def update_patient(patient_id):
@@ -122,8 +120,6 @@ def delete_patient(patient_id):
     flash('Patient deleted', 'success')
     return redirect(url_for('admin.admin_dashboard'))
 
-
-# ---------------- APPOINTMENTS ----------------
 
 @admin_bp.route('/set_appointment', methods=['GET', 'POST'])
 @login_required
@@ -174,7 +170,6 @@ def cancel_appointment(appointment_id):
     return redirect(url_for('admin.admin_dashboard'))
 
 
-# ---------------- SEARCH & VIEW ----------------
 
 @admin_bp.route('/treatment/<int:treatment_id>')
 @login_required
