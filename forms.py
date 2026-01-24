@@ -12,7 +12,7 @@ class PatientRegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], validators=[DataRequired()])
+    gender = RadioField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], validators=[DataRequired()])
     contact_num = StringField('Contact Number', validators=[DataRequired(), Length(min=10, max=15)])
     dob = DateField('Date of Birth', format='%Y-%m-%d', validators=[DataRequired()])
     age = IntegerField('Age', validators=[DataRequired()])
