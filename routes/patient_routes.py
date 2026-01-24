@@ -25,7 +25,7 @@ def register():
             return redirect(url_for('patient.register'))
     else:
         if request.method == 'POST':
-            print("❌ Form Validation Failed!")
+            print("Form Validation Failed!")
             print(form.errors) 
             flash("Please check the form for errors.", "danger")
 

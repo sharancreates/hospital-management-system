@@ -37,7 +37,7 @@ def create_app():
             
             if not existing_admin:
                 admin_user = User(email='admin@arogya.com', role='admin')
-                admin_user.set_password('admin123') 
+                admin_user.set_password('admin123')
                 db.session.add(admin_user)
                 db.session.commit()
                 return "<h1>Success! Tables created & Admin user 'admin@arogya.com' added.</h1>"
