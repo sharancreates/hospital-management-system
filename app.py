@@ -33,7 +33,17 @@ def create_app():
     def init_db():
         try:
             db.create_all()
-            return "<h1>Success: Database tables created!</h1>"
+            existing_admin = User.query.filter_by(role='admin').first()
+            
+            if not existing_admin:
+                admin_user = User(email='admin@arogya.com', role='admin')
+                admin_user.set_password('admin123') 
+                db.session.add(admin_user)
+                db.session.commit()
+                return "<h1>Success! Tables created & Admin user 'admin@arogya.com' added.</h1>"
+            else:
+                return "<h1>Tables exist. Admin user already exists.</h1>"
+                
         except Exception as e:
             return f"<h1>Error: {str(e)}</h1>"
 
