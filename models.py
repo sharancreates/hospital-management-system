@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class User(db.Model, UserMixin):
     user_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
-    password_hash = db.Column(db.String(10000), nullable=False)
+    password_hash = db.Column(db.String(500), nullable=False)
     role = db.Column(db.String(20), nullable=False) 
 
     patient = db.relationship('Patient', back_populates='user', uselist=False)

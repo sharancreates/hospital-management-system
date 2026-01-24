@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from routes import register_bp
 from flask_wtf.csrf import CSRFProtect
+from sqlalchemy import text
 
 def create_app():
     app = Flask(__name__)
@@ -44,6 +45,17 @@ def create_app():
             else:
                 return "<h1>Tables exist. Admin user already exists.</h1>"
                 
+        except Exception as e:
+            return f"<h1>Error: {str(e)}</h1>"
+
+    @app.route('/fix-db')
+    def fix_db():
+        try:
+            # This command forces the column to get bigger
+            with db.engine.connect() as conn:
+                conn.execute(text('ALTER TABLE "user" ALTER COLUMN password_hash TYPE VARCHAR(500);'))
+                conn.commit()
+            return "<h1>Success! Password column resized to 256 characters.</h1>"
         except Exception as e:
             return f"<h1>Error: {str(e)}</h1>"
 
