@@ -30,34 +30,6 @@ def create_app():
 
     register_bp(app)
 
-    @app.route('/init-db')
-    def init_db():
-        try:
-            db.create_all()
-            existing_admin = User.query.filter_by(role='admin').first()
-            
-            if not existing_admin:
-                admin_user = User(email='admin@arogya.com', role='admin')
-                admin_user.set_password('admin$Arogya077')
-                db.session.add(admin_user)
-                db.session.commit()
-                return "<h1>Success! Tables created & Admin user 'admin@arogya.com' added.</h1>"
-            else:
-                return "<h1>Tables exist. Admin user already exists.</h1>"
-                
-        except Exception as e:
-            return f"<h1>Error: {str(e)}</h1>"
-
-    @app.route('/fix-db')
-    def fix_db():
-        try:
-            with db.engine.connect() as conn:
-                conn.execute(text('ALTER TABLE "user" ALTER COLUMN password_hash TYPE VARCHAR(500);'))
-                conn.commit()
-            return "<h1>Success! Password column resized to 256 characters.</h1>"
-        except Exception as e:
-            return f"<h1>Error: {str(e)}</h1>"
-
     return app
 
 app = create_app()
