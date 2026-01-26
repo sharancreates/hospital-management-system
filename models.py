@@ -2,6 +2,8 @@ from extensions import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
+MAX_APPOINTMENTS_PER_SLOT = 10
+
 class User(db.Model, UserMixin):
     user_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, flash, redirect, url_for, render_template, abort
-from models import Patient, User, Doctor, Department, Appointment, Treatment, Availability
+from models import Patient, User, Doctor, Department, Appointment, Treatment, Availability, MAX_APPOINTMENTS_PER_SLOT
 from forms import PatientRegistrationForm, PatientUpdateForm
 from datetime import datetime, date
 from extensions import db
@@ -7,8 +7,6 @@ from flask_login import current_user, login_required
 from werkzeug.security import generate_password_hash
 
 patient_bp = Blueprint('patient', __name__, url_prefix='/patient')
-
-MAX_APPOINTMENTS_PER_SLOT = 10
 
 def get_current_patient():
     return Patient.query.filter_by(user_id=current_user.user_id).first()
@@ -144,7 +142,7 @@ def add_appointment():
                         time=s.start_time
                     ).filter(Appointment.status != 'Cancelled').count() # Ignore cancelled slots
                     
-                    if booked_count < MAX_APPOINTMENTS_PER_SLOT:
+                    if booked_count < 10:
                         available_slots.append(s)
 
                 if not available_slots:
@@ -158,6 +156,11 @@ def add_appointment():
 
             if not slot or str(slot.doctor_id) != str(selected_doctor):
                  flash("Invalid slot selection.", "danger")
+                 return redirect(url_for("patient.add_appointment"))
+
+            # FIX: Ensure the slot actually belongs to the selected date!
+            if slot.date != date_obj:
+                 flash("Slot date mismatch. Please refresh and try again.", "danger")
                  return redirect(url_for("patient.add_appointment"))
 
             current_count = Appointment.query.filter_by(

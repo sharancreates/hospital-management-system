@@ -1,90 +1,126 @@
 {% extends "admin/admin_base.html" %}
 
-{% block title %}Add Appointment - Arogya{% endblock %}
+{% block title %}Set Appointment - Arogya Admin{% endblock %}
 
 {% block admin_content %}
 <div class="flex justify-center items-start min-h-[80vh]">
-  
   <div class="w-full max-w-2xl bg-gray-900 border border-gray-800 rounded-2xl shadow-xl overflow-hidden">
     
     <div class="p-8 border-b border-gray-800">
       <h2 class="text-2xl font-bold text-white tracking-tight">Set New Appointment</h2>
-      <p class="text-gray-400 text-sm mt-1">Schedule a consultation between a patient and a doctor.</p>
+      <p class="text-gray-400 text-sm mt-1">Select Doctor & Date to see available slots.</p>
     </div>
 
-    <form action="{{ url_for('admin.set_appointment') }}" method="POST" id="new-app" class="p-8 space-y-6">
+    <form action="{{ url_for('admin.set_appointment') }}" method="POST" class="p-8 space-y-6">
+      {{ form.hidden_tag() }}
 
       <div>
-        <label for="pat" class="block text-sm font-medium text-gray-300 mb-2">Select Patient</label>
-        <div class="relative">
-          <select 
-            id="pat" 
-            name="pat" 
-            required
-            class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 appearance-none cursor-pointer outline-none transition-all"
-          >
-            <option value="" selected disabled class="text-gray-500">-- Select Patient --</option>
-            {% for pat in patients %}
-            <option value="{{ pat.patient_id }}" class="bg-gray-900 py-2">{{ pat.pat_name }}</option>
-            {% endfor %}
-          </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </div>
-        </div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Select Patient</label>
+        {{ form.patient(class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg p-3") }}
       </div>
 
       <div>
-        <label for="doc" class="block text-sm font-medium text-gray-300 mb-2">Select Doctor</label>
-        <div class="relative">
-          <select 
-            id="doc" 
-            name="doc" 
-            required
-            class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 appearance-none cursor-pointer outline-none transition-all"
-          >
-            <option value="" selected disabled class="text-gray-500">-- Select Doctor --</option>
-            {% for doc in doctors %}
-            <option value="{{ doc.doctor_id }}" class="bg-gray-900 py-2">{{ doc.doc_name }}</option>
-            {% endfor %}
-          </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </div>
-        </div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Select Doctor</label>
+        {{ form.doctor(id="doctor_select", class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg p-3") }}
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label for="date" class="block text-sm font-medium text-gray-300 mb-2">Date</label>
-          <input 
-            type="date" 
-            id="date" 
-            name="date" 
-            required
-            class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all [color-scheme:dark]"
-          >
+          <label class="block text-sm font-medium text-gray-300 mb-2">Date</label>
+          {{ form.date(id="date_select", type="date", class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg p-3 [color-scheme:dark]") }}
         </div>
 
         <div>
-          <label for="time" class="block text-sm font-medium text-gray-300 mb-2">Time</label>
-          <input 
-            type="time" 
-            id="time" 
-            name="time" 
-            required
-            class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all [color-scheme:dark]"
-          >
+          <label class="block text-sm font-medium text-gray-300 mb-2">Available Slots</label>
+          
+          <div class="relative">
+            <select id="time_slot_select" name="time" required
+              class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg p-3 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+              <option value="" selected disabled>-- Select Doctor & Date First --</option>
+            </select>
+            
+            <div id="loading_spinner" class="hidden absolute right-3 top-3">
+               <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+          </div>
+          
+          {% for error in form.time.errors %}
+            <span class="text-red-500 text-xs mt-1 block">{{ error }}</span>
+          {% endfor %}
         </div>
       </div>
 
       <div class="pt-4">
-        <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-800 font-bold rounded-lg text-sm px-5 py-3.5 text-center shadow-lg hover:shadow-blue-500/20 transition-all">
-          Create Appointment
+        <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-500 font-bold rounded-lg text-sm px-5 py-3.5 transition-all">
+          Schedule Appointment
         </button>
       </div>
 
     </form>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const doctorSelect = document.getElementById('doctor_select');
+      const dateSelect = document.getElementById('date_select');
+      const timeSelect = document.getElementById('time_slot_select');
+      const loader = document.getElementById('loading_spinner');
+
+      function fetchSlots() {
+          const doctorId = doctorSelect.value;
+          const dateVal = dateSelect.value;
+
+          // Only fetch if both are selected
+          if (doctorId && dateVal) {
+              
+              // Show loading state
+              loader.classList.remove('hidden');
+              timeSelect.disabled = true;
+              timeSelect.innerHTML = '<option>Loading slots...</option>';
+
+              fetch(`/admin/get_slots/${doctorId}/${dateVal}`)
+                  .then(response => response.json())
+                  .then(data => {
+                      timeSelect.innerHTML = ''; // Clear options
+                      
+                      if (data.slots && data.slots.length > 0) {
+                          // Add default option
+                          const defaultOpt = document.createElement('option');
+                          defaultOpt.text = "-- Select a Time Slot --";
+                          defaultOpt.value = "";
+                          defaultOpt.disabled = true;
+                          defaultOpt.selected = true;
+                          timeSelect.appendChild(defaultOpt);
+
+                          // Populate slots
+                          data.slots.forEach(slot => {
+                              const option = document.createElement('option');
+                              option.value = slot.time; // "09:00"
+                              option.text = `${slot.display} (${slot.remaining} seats left)`;
+                              timeSelect.appendChild(option);
+                          });
+                          timeSelect.disabled = false;
+                      } else {
+                          timeSelect.innerHTML = '<option disabled selected>No slots available</option>';
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      timeSelect.innerHTML = '<option disabled selected>Error fetching slots</option>';
+                  })
+                  .finally(() => {
+                      loader.classList.add('hidden');
+                  });
+          }
+      }
+
+      // Listen for changes
+      doctorSelect.addEventListener('change', fetchSlots);
+      dateSelect.addEventListener('change', fetchSlots);
+  });
+</script>
 {% endblock %}

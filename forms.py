@@ -34,7 +34,7 @@ class DoctorForm(FlaskForm):
     doc_name = StringField('Doctor Name', validators=[DataRequired(), Length(min=2, max=100, message="Name must be between 2 and 100 characters")])
     gender = RadioField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], validators=[DataRequired()])
     
-    contact_num = StringField('Contact Number', validators=[DataRequired(),Length(min=10, max=10, message="Phone number must be 10 digits"),Regexp(r'^\+?1?\d{9,15}$', message="Invalid phone format (digits only)")])
+    contact_num = StringField('Contact Number', validators=[DataRequired(),Length(min=10, max=15, message="Phone number must be 10-15 digits"),Regexp(r'^\+?1?\d{9,15}$', message="Invalid phone format (digits only)")])
     
     dob = DateField('Date of Birth', format='%Y-%m-%d', validators=[DataRequired()])
     
@@ -58,7 +58,7 @@ class PatientForm(FlaskForm):
     dob = DateField('Date of Birth', format='%Y-%m-%d', validators=[DataRequired()])
     
     # Age is often calculated from DOB, but if you want it manually input:
-    age = StringField('Age', validators=[DataRequired(), Regexp(r'^\d+$', message="Age must be a number")])
+    age = IntegerField('Age', validators=[DataRequired()])
     
     submit = SubmitField('Save Patient')
 

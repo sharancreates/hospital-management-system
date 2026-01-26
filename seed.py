@@ -77,7 +77,7 @@ def seed_database():
                 dob=date(1980, 5, 15),
                 contact_num=f"98765432{i}0",
                 user_id=user.user_id,
-                specialization=dept.department_id 
+                department_id=dept.department_id 
             )
             db.session.add(doc)
             doctors_objs.append(doc) # Keep track for availability later

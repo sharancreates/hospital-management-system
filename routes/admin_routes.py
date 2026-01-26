@@ -1,10 +1,17 @@
 from flask import Blueprint, request, flash, redirect, url_for, render_template
-from models import Patient, User, Department, Doctor, Appointment, Treatment
-from forms import DoctorForm, PatientForm, AppointmentForm
-from datetime import datetime
-from extensions import db
+from datetime import datetime, date
 from werkzeug.security import generate_password_hash
 from flask_login import login_required
+import string
+from extensions import db
+from models import Patient, User, Department, Doctor, Appointment, Treatment, MAX_APPOINTMENTS_PER_SLOT, Availability
+from forms import DoctorForm, PatientForm, AppointmentForm
+import secrets
+
+def generate_password(length=12):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(secrets.choice(characters) for _ in range(length))
+    return password
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -31,7 +38,7 @@ def add_doctor():
                 email = f"{base_email.split('@')[0]}.{count}@arogya.in"
                 count += 1
 
-            default_password = "doctor123"
+            default_password = generate_password()
             hashed_pw = generate_password_hash(default_password)
             user = User(email=email, password_hash=hashed_pw, role='doctor')
             
@@ -120,6 +127,40 @@ def delete_patient(patient_id):
     flash('Patient deleted', 'success')
     return redirect(url_for('admin.admin_dashboard'))
 
+from flask import jsonify
+
+@admin_bp.route('/get_slots/<int:doctor_id>/<string:date_str>')
+@login_required
+def get_slots(doctor_id, date_str):
+    try:
+        selected_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        all_availability = Availability.query.filter_by(
+            doctor_id=doctor_id,
+            date=selected_date
+        ).order_by(Availability.start_time).all()
+
+        available_times = []
+
+        for slot in all_availability:
+            booked_count = Appointment.query.filter_by(
+                doctor_id=doctor_id,
+                date=selected_date,
+                time=slot.start_time
+            ).filter(Appointment.status != 'Cancelled').count()
+
+            if booked_count < 10:
+                time_str = slot.start_time.strftime("%H:%M") 
+                available_times.append({
+                    "time": time_str,
+                    "display": slot.start_time.strftime("%I:%M %p"), 
+                    "remaining": 10 - booked_count
+                })
+        
+        return jsonify({"slots": available_times})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 
 @admin_bp.route('/set_appointment', methods=['GET', 'POST'])
 @login_required
@@ -129,46 +170,84 @@ def set_appointment():
     form.patient.choices = [(p.patient_id, p.pat_name) for p in Patient.query.all()]
 
     if form.validate_on_submit():
-        existing_appt = Appointment.query.filter_by(
-            doctor_id=form.doctor.data, 
-            date=form.date.data, 
-            time=form.time.data
+        doctor_id = form.doctor.data
+        patient_id = form.patient.data
+        selected_date = form.date.data
+        selected_time = form.time.data 
+        if selected_date < date.today():
+             flash("Cannot book appointments in the past.", "warning")
+             return render_template('admin/add_appointment.html', form=form)
+        valid_slot = Availability.query.filter_by(
+            doctor_id=doctor_id,
+            date=selected_date,
+            start_time=selected_time
         ).first()
 
-        if existing_appt and existing_appt.status != 'Cancelled':
-            flash('This doctor is already booked for that time.', 'warning')
+        if not valid_slot:
+            flash(f"Invalid Slot! Doctor is not available at {selected_time.strftime('%I:%M %p')} on this date.", "danger")
+            flash("Please check the Doctor's availability schedule (e.g., 09:00, 11:00).", "info")
+            return render_template('admin/add_appointment.html', form=form)
+
+        current_count = Appointment.query.filter_by(
+            doctor_id=doctor_id, 
+            date=selected_date, 
+            time=selected_time
+        ).filter(Appointment.status != 'Cancelled').count()
+
+        if current_count >= 10:
+            flash(f'Slot at {selected_time.strftime("%I:%M %p")} is fully booked (Max {MAX_APPOINTMENTS_PER_SLOT}).', 'warning')
         else:
-            new_appt = Appointment(
-                patient_id=form.patient.data,
-                doctor_id=form.doctor.data,
-                date=form.date.data,
-                time=form.time.data,
-                status='Booked'
-            )
-            db.session.add(new_appt)
-            db.session.commit()
-            flash('Appointment scheduled successfully', 'success')
-            return redirect(url_for('admin.admin_dashboard'))
+            try:
+                new_token = current_count + 1
+
+                new_appt = Appointment(
+                    patient_id=patient_id,
+                    doctor_id=doctor_id,
+                    date=selected_date,
+                    time=selected_time,
+                    status='Booked',
+                    token_number=new_token
+                )
+                
+                db.session.add(new_appt)
+                db.session.commit()
+                
+                flash(f'Appointment scheduled successfully! Token: {new_token}', 'success')
+                return redirect(url_for('admin.admin_dashboard'))
+                
+            except Exception as e:
+                db.session.rollback()
+                flash(f"Database error: {str(e)}", "danger")
 
     return render_template('admin/add_appointment.html', form=form)
-
-
 @admin_bp.route('/completed/<int:appointment_id>', methods=['POST'])
 @login_required
 def complete_appointment(appointment_id):
-    appointment = Appointment.query.get_or_404(appointment_id)
-    appointment.status = 'Completed'
-    db.session.commit()
+    try:
+        appointment = Appointment.query.get_or_404(appointment_id)
+        appointment.status = 'Completed'
+        db.session.commit()
+        flash('Appointment marked as completed.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error updating status: {str(e)}', 'danger')
+        
     return redirect(url_for('admin.admin_dashboard'))
+
 
 @admin_bp.route('/cancelled/<int:appointment_id>', methods=['POST'])
 @login_required
 def cancel_appointment(appointment_id):
-    appointment = Appointment.query.get_or_404(appointment_id)
-    appointment.status = 'Cancelled'
-    db.session.commit()
+    try:
+        appointment = Appointment.query.get_or_404(appointment_id)
+        appointment.status = 'Cancelled'
+        db.session.commit()
+        flash('Appointment cancelled.', 'info')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error cancelling appointment: {str(e)}', 'danger')
+        
     return redirect(url_for('admin.admin_dashboard'))
-
 
 
 @admin_bp.route('/treatment/<int:treatment_id>')
