@@ -6,6 +6,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, DateField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from datetime import date
+from models import User
 
 class PatientRegistrationForm(FlaskForm):
     pat_name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=100)])
@@ -37,8 +38,6 @@ class DoctorForm(FlaskForm):
     contact_num = StringField('Contact Number', validators=[DataRequired(),Length(min=10, max=15, message="Phone number must be 10-15 digits"),Regexp(r'^\+?1?\d{9,15}$', message="Invalid phone format (digits only)")])
     
     dob = DateField('Date of Birth', format='%Y-%m-%d', validators=[DataRequired()])
-    
-    # Coerce=int ensures the value sent back is an integer (Department ID)
     specialization = SelectField('Department', coerce=int, validators=[DataRequired()])
     
     submit = SubmitField('Save Doctor')
@@ -50,14 +49,9 @@ class DoctorForm(FlaskForm):
 
 class PatientForm(FlaskForm):
     pat_name = StringField('Patient Name', validators=[DataRequired(), Length(min=2, max=100)])
-    
     gender = RadioField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], validators=[DataRequired()])
-    
     contact_num = StringField('Contact Number', validators=[DataRequired(),Length(min=10, max=15),Regexp(r'^\d+$', message="Phone number must contain only digits")])
-    
     dob = DateField('Date of Birth', format='%Y-%m-%d', validators=[DataRequired()])
-    
-    # Age is often calculated from DOB, but if you want it manually input:
     age = IntegerField('Age', validators=[DataRequired()])
     
     submit = SubmitField('Save Patient')
@@ -74,8 +68,11 @@ class AppointmentForm(FlaskForm):
         if field.data < date.today():
             raise ValidationError("Appointments cannot be booked in the past.")
 
-# --- LOGIN FORM ---
-# Use this for your login.html page
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')
+
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -89,7 +86,6 @@ class TreatmentForm(FlaskForm):
 
 class AvailabilityForm(FlaskForm):
     date = DateField('Date', format='%Y-%m-%d', validators=[DataRequired()])
-    # Pre-defined slots to match your logic
     time_slot = SelectField('Time Slot', choices=[
         ('09:00', '09:00 - 11:00'),
         ('11:00', '11:00 - 13:00'),
@@ -103,3 +99,12 @@ class AvailabilityForm(FlaskForm):
     def validate_date(self, field):
         if field.data < date.today():
             raise ValidationError("You cannot set availability for past dates.")
+        
+class RequestResetForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('There is no account with that email. You must register first.')

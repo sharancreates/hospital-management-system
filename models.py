@@ -1,6 +1,8 @@
 from extensions import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import current_app
+from itsdangerous import URLSafeTimedSerializer as Serializer
 
 MAX_APPOINTMENTS_PER_SLOT = 10
 
@@ -21,6 +23,19 @@ class User(db.Model, UserMixin):
     
     def get_id(self):
         return str(self.user_id)
+    
+    def get_reset_token(self):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        return s.dumps({'user_id': self.user_id}, salt='password-reset-salt')
+
+    @staticmethod
+    def verify_reset_token(token, expires_sec=1800):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token, salt='password-reset-salt', max_age=expires_sec)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
     
 class Doctor(db.Model):
     doctor_id = db.Column(db.Integer, primary_key = True)

@@ -27,33 +27,33 @@ def register():
             print(form.errors) 
             flash("Please check the form for errors.", "danger")
 
-        try:
-            hashed_pw = generate_password_hash(form.password.data)
-            user = User(
-                email=form.email.data,
-                password_hash=hashed_pw,
-                role='patient'
-            )
-            db.session.add(user)
-            db.session.flush()  
+            try:
+                hashed_pw = generate_password_hash(form.password.data)
+                user = User(
+                    email=form.email.data,
+                    password_hash=hashed_pw,
+                    role='patient'
+                )
+                db.session.add(user)
+                db.session.flush()  
 
-            patient = Patient(
-                pat_name=form.pat_name.data,
-                gender=form.gender.data,
-                dob=form.dob.data,
-                contact_num=form.contact_num.data,
-                age=form.age.data,
-                user_id=user.user_id
-            )
-            db.session.add(patient)
-            db.session.commit()
-            
-            flash('Registration successful! Please login.', 'success')
-            return redirect(url_for('auth.login'))
-            
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error during registration: {str(e)}', 'danger')
+                patient = Patient(
+                    pat_name=form.pat_name.data,
+                    gender=form.gender.data,
+                    dob=form.dob.data,
+                    contact_num=form.contact_num.data,
+                    age=form.age.data,
+                    user_id=user.user_id
+                )
+                db.session.add(patient)
+                db.session.commit()
+                
+                flash('Registration successful! Please login.', 'success')
+                return redirect(url_for('auth.login'))
+                
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error during registration: {str(e)}', 'danger')
 
     return render_template('patient/register.html', form=form)
 

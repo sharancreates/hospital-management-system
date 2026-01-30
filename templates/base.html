@@ -96,7 +96,7 @@
                                 {% endif %}
                             </div>
                             
-                            <div class="text-sm font-medium">{{ message }}</div>
+                            <div class="text-sm font-medium">{{ message | safe }}</div>
                         </div>
                     {% endfor %}
                 </div>

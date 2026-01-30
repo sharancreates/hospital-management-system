@@ -24,7 +24,14 @@
             </div>
 
             <div>
-                {{ form.password.label(class="block text-sm font-medium text-gray-300 mb-2") }}
+                <div class="flex items-center justify-between mb-2">
+                    {{ form.password.label(class="block text-sm font-medium text-gray-300") }}
+                    
+                    <a href="{{ url_for('auth.reset_request') }}" class="text-sm text-blue-400 hover:text-blue-300 hover:underline transition-colors">
+                        Forgot Password?
+                    </a>
+                </div>
+
                 {{ form.password(class="w-full bg-gray-950 border border-gray-800 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 transition-all outline-none", placeholder="Enter your password") }}
                 {% for error in form.password.errors %}
                     <p class="text-red-500 text-xs mt-1">{{ error }}</p>
@@ -40,6 +47,7 @@
             </div>
             
         </form>
+        
     </div>
 </div>
 {% endblock %}
