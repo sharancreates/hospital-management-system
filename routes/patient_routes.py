@@ -23,9 +23,9 @@ def register():
             return redirect(url_for('patient.register'))
     else:
         if request.method == 'POST':
-            print("Form Validation Failed!")
-            print(form.errors) 
-            flash("Please check the form for errors.", "danger")
+            # print("Form Validation Failed!")
+            # print(form.errors) 
+            # flash("Please check the form for errors.", "danger")
 
             try:
                 hashed_pw = generate_password_hash(form.password.data)
