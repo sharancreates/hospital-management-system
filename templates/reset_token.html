@@ -14,20 +14,20 @@
         <form class="space-y-6" method="POST">
             {{ form.hidden_tag() }}
             
-            <div>
+            <div class="relative">
                 <label class="block text-sm font-medium text-gray-300 mb-2">New Password</label>
-                {{ form.password(class="w-full bg-gray-950 border border-gray-800 text-white text-sm rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500", placeholder="Minimum 6 characters") }}
-                {% for error in form.password.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ error }}</p>
-                {% endfor %}
+                {{ form.password(id="new_pass", class="w-full bg-gray-950 border border-gray-800 text-white text-sm rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500 pr-10") }}
+                <button type="button" onclick="toggleResetPass('new_pass')" class="absolute inset-y-0 right-0 top-8 pr-3 flex items-center text-gray-400 hover:text-white">
+                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </button>
             </div>
 
-            <div>
+            <div class="relative">
                 <label class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
-                {{ form.confirm_password(class="w-full bg-gray-950 border border-gray-800 text-white text-sm rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500", placeholder="Re-enter password") }}
-                {% for error in form.confirm_password.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ error }}</p>
-                {% endfor %}
+                {{ form.confirm_password(id="confirm_pass", class="w-full bg-gray-950 border border-gray-800 text-white text-sm rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500 pr-10") }}
+                <button type="button" onclick="toggleResetPass('confirm_pass')" class="absolute inset-y-0 right-0 top-8 pr-3 flex items-center text-gray-400 hover:text-white">
+                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </button>
             </div>
 
             <button type="submit" class="w-full text-white bg-emerald-600 hover:bg-emerald-500 font-bold rounded-lg text-sm px-5 py-3 shadow-lg hover:shadow-emerald-500/20 transition-all">
@@ -36,4 +36,11 @@
         </form>
     </div>
 </div>
+
+<script>
+    function toggleResetPass(id) {
+        var x = document.getElementById(id);
+        if (x.type === "password") { x.type = "text"; } else { x.type = "password"; }
+    }
+</script>
 {% endblock %}

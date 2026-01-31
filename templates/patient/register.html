@@ -1,103 +1,81 @@
 {% extends "base.html" %}
 
-{% block title %}Register - Arogya{% endblock %}
-
-{% block css %}
-<link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-{% endblock %}
+{% block title %}Patient Registration - Arogya{% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-  
-  <div class="w-full max-w-lg bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
+<div class="flex items-center justify-center min-h-[80vh] py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8 bg-gray-900 p-10 rounded-2xl border border-gray-800 shadow-xl relative">
     
-    <div class="p-8 border-b border-gray-800 text-center">
-      <h2 class="text-3xl font-bold text-white tracking-tight">Patient Registration</h2>
-      <p class="text-gray-400 text-sm mt-2">Join Arogya today for better healthcare.</p>
+    <div class="text-center">
+      <h2 class="mt-6 text-3xl font-extrabold text-white">Create Account</h2>
+      <p class="mt-2 text-sm text-gray-400">Join Arogya to manage your health.</p>
     </div>
 
-    <form action="{{ url_for('patient.register') }}" method="POST" id="new_pat" class="p-8 space-y-5">
-      {{ form.hidden_tag() }} <div>
-        {{ form.pat_name.label(class="block text-sm font-medium text-gray-300 mb-1.5") }}
-        {{ form.pat_name(class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all", placeholder="Full Name") }}
-        {% for error in form.pat_name.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
-        {% endfor %}
-      </div>
+    <form class="mt-8 space-y-6" method="POST">
+      {{ form.hidden_tag() }}
 
-      <div>
-        {{ form.email.label(class="block text-sm font-medium text-gray-300 mb-1.5") }}
-        {{ form.email(class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all", placeholder="you@example.com") }}
-        {% for error in form.email.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
-        {% endfor %}
-      </div>
-
-      <div>
-        {{ form.password.label(class="block text-sm font-medium text-gray-300 mb-1.5") }}
-        {{ form.password(class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all", placeholder="Choose a secure password") }}
-        {% for error in form.password.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
-        {% endfor %}
-      </div>
-
-      {% if form.confirm_password %}
-      <div>
-        {{ form.confirm_password.label(class="block text-sm font-medium text-gray-300 mb-1.5") }}
-        {{ form.confirm_password(class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all", placeholder="Repeat password") }}
-        {% for error in form.confirm_password.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
-        {% endfor %}
-      </div>
-      {% endif %}
-
-      <div class="grid grid-cols-2 gap-4">
+      <div class="rounded-md shadow-sm space-y-4">
+        
         <div>
-          {{ form.dob.label(class="block text-sm font-medium text-gray-300 mb-1.5") }}
-          {{ form.dob(id="dob_picker", class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all", placeholder="Select Date") }}
-          {% for error in form.dob.errors %}
-            <p class="text-red-500 text-xs mt-1">{{ error }}</p>
-          {% endfor %}
+          {{ form.pat_name.label(class="block text-sm font-medium text-gray-400 mb-1") }}
+          {{ form.pat_name(class="w-full px-3 py-2 border border-gray-700 bg-gray-950 text-white rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm") }}
         </div>
         <div>
-          {{ form.age.label(class="block text-sm font-medium text-gray-300 mb-1.5") }}
-          {{ form.age(id="age", readonly=True, class="w-full bg-gray-900 border border-gray-700 text-gray-400 text-sm rounded-lg cursor-not-allowed block p-3 outline-none transition-all", placeholder="Calculated") }}
+          {{ form.email.label(class="block text-sm font-medium text-gray-400 mb-1") }}
+          {{ form.email(class="w-full px-3 py-2 border border-gray-700 bg-gray-950 text-white rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm") }}
         </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+              {{ form.contact_num.label(class="block text-sm font-medium text-gray-400 mb-1") }}
+              {{ form.contact_num(class="w-full px-3 py-2 border border-gray-700 bg-gray-950 text-white rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm") }}
+            </div>
+            <div>
+              {{ form.gender.label(class="block text-sm font-medium text-gray-400 mb-1") }}
+              {{ form.gender(class="w-full px-3 py-2 border border-gray-700 bg-gray-950 text-white rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm") }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+              {{ form.dob.label(class="block text-sm font-medium text-gray-400 mb-1") }}
+              {{ form.dob(id="dob_input", type="date", class="w-full px-3 py-2 border border-gray-700 bg-gray-950 text-white rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm [color-scheme:dark]") }}
+            </div>
+            <div>
+              {{ form.age.label(class="block text-sm font-medium text-gray-400 mb-1") }}
+              {{ form.age(id="age_input", readonly=True, class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-400 cursor-not-allowed rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm") }}
+            </div>
+        </div>
+
+        <div class="relative">
+          {{ form.password.label(class="block text-sm font-medium text-gray-400 mb-1") }}
+          {{ form.password(id="password", class="w-full px-3 py-2 border border-gray-700 bg-gray-950 text-white rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm pr-10") }}
+          <button type="button" onclick="togglePassword('password')" class="absolute inset-y-0 right-0 top-6 pr-3 flex items-center text-gray-400 hover:text-white">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </button>
+        </div>
+
+        <div class="relative">
+          {{ form.confirm_password.label(class="block text-sm font-medium text-gray-400 mb-1") }}
+          {{ form.confirm_password(id="confirm_password", class="w-full px-3 py-2 border border-gray-700 bg-gray-950 text-white rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm pr-10") }}
+          <button type="button" onclick="togglePassword('confirm_password')" class="absolute inset-y-0 right-0 top-6 pr-3 flex items-center text-gray-400 hover:text-white">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </button>
+        </div>
+
       </div>
 
       <div>
-        {{ form.gender.label(class="block text-sm font-medium text-gray-300 mb-2") }}
-        <div class="flex gap-6">
-            {% for subfield in form.gender %}
-            <label class="flex items-center gap-2 cursor-pointer group">
-                <div class="relative flex items-center">
-                    {{ subfield(class="peer h-4 w-4 cursor-pointer appearance-none rounded-full border border-gray-600 checked:border-blue-500 checked:bg-blue-600 transition-all") }}
-                    <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
-                </div>
-                <span class="text-sm text-gray-400 group-hover:text-white transition-colors">{{ subfield.label.text }}</span>
-            </label>
-            {% endfor %}
-        </div>
-        {% for error in form.gender.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
-        {% endfor %}
+        {{ form.submit(class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all") }}
       </div>
-
-      <div>
-        {{ form.contact_num.label(class="block text-sm font-medium text-gray-300 mb-1.5") }}
-        {{ form.contact_num(class="w-full bg-gray-950 border border-gray-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-gray-600 outline-none transition-all", placeholder="10-digit number") }}
-        {% for error in form.contact_num.errors %}
-          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
-        {% endfor %}
-      </div>
-
-      <div class="pt-2">
-        {{ form.submit(class="w-full text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-800 font-bold rounded-lg text-sm px-5 py-3.5 text-center shadow-lg hover:shadow-blue-500/20 transition-all cursor-pointer") }}
-      </div>
-
-      <div class="text-center text-sm text-gray-500 pt-2">
-        <p>Already have an account? <a href="{{ url_for('auth.login') }}" class="text-blue-400 hover:underline hover:text-blue-300">Login here</a></p>
+      
+      <div class="flex justify-between text-sm mt-4">
+        <a href="{{ url_for('index') }}" class="font-medium text-gray-400 hover:text-white transition-colors">
+            &larr; Back to Home
+        </a>
+        <a href="{{ url_for('auth.login') }}" class="font-medium text-blue-400 hover:text-blue-300">
+          Already have an account? Login
+        </a>
       </div>
 
     </form>
@@ -105,46 +83,26 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // 1. Initialize Flatpickr
-    flatpickr("#dob_picker", {
-        dateFormat: "Y-m-d",
-        theme: "dark",
-        disableMobile: "true",
-        onChange: function(selectedDates, dateStr, instance) {
-            calculateAge(selectedDates[0]);
-        }
-    });
-
-    // 2. Age Calculation Logic
-    function calculateAge(dobDate) {
-        if (dobDate) {
-            const today = new Date();
-            let age = today.getFullYear() - dobDate.getFullYear();
-            const monthDiff = today.getMonth() - dobDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
-                age--;
-            }
-            document.getElementById('age').value = age >= 0 ? age : 0;
+    // 1. Password Toggle Script
+    function togglePassword(fieldId) {
+        const passwordInput = document.getElementById(fieldId);
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+        } else {
+            passwordInput.type = "password";
         }
     }
 
-    // 3. Optional: Client-side validation for immediate feedback
-    // (Note: Your form.submit already triggers server validation, 
-    // but this adds an extra layer for user experience)
-    const form = document.getElementById('new_pat');
-    form.addEventListener('submit', function(event) {
-        // Basic check for contact number
-        const phone = document.getElementById('contact_num');
-        // Check if phone element exists (Flask-WTF assigns id="contact_num")
-        if (phone) {
-             const cleanPhone = phone.value.replace(/\D/g, ''); 
-             if (cleanPhone.length !== 10) {
-                 alert("Contact number must be exactly 10 digits.");
-                 event.preventDefault(); 
-             }
+    // 2. Auto-Calculate Age Script
+    document.getElementById('dob_input').addEventListener('change', function() {
+        const dob = new Date(this.value);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+            age--;
         }
+        document.getElementById('age_input').value = age;
     });
-});
 </script>
 {% endblock %}
