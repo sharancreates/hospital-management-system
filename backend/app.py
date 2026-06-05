@@ -79,7 +79,8 @@ def create_app(config_class=Config):
         # Double-submit cookie pattern CSRF
         # Use dynamic secure flag from config
         secure_flag = app.config.get('SESSION_COOKIE_SECURE', False)
-        response.set_cookie('XSRF-TOKEN', generate_csrf(), secure=secure_flag, samesite='Lax')
+        samesite_flag = app.config.get('SESSION_COOKIE_SAMESITE', 'Lax')
+        response.set_cookie('XSRF-TOKEN', generate_csrf(), secure=secure_flag, samesite=samesite_flag)
         
         # Inject standard security headers
         response.headers['Content-Security-Policy'] = (

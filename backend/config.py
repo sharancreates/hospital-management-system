@@ -13,7 +13,7 @@ class Config:
     # Production Cookie Security
     SESSION_COOKIE_SECURE = os.environ.get('FLASK_ENV') == 'production'
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SAMESITE = os.environ.get('SESSION_COOKIE_SAMESITE') or 'Lax'
     
     # Request constraints
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB limit
