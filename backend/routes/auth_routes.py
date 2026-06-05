@@ -28,7 +28,13 @@ def login():
     if user:
         login_user(user)
         current_app.logger.warning(f"Successful login for user: {email}")
-        return {"message": "Logged in successfully", "role": user.role, "status": "success"}
+        
+        # Generate auth token for cross-origin (Vercel/Render) clients
+        from itsdangerous import URLSafeTimedSerializer as Serializer
+        s = Serializer(current_app.config['SECRET_KEY'])
+        token = s.dumps({'user_id': user.user_id}, salt='auth-token-salt')
+        
+        return {"message": "Logged in successfully", "role": user.role, "token": token, "status": "success"}
     else:
         current_app.logger.warning(f"Failed login attempt for user: {email}")
         return {"message": "Invalid email or password", "status": "error"}, 401

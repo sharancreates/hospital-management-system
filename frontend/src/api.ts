@@ -20,6 +20,12 @@ const getCookie = (name: string): string | null => {
 };
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    // Inject auth token if available in localStorage
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (token && config.headers) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const csrfToken = getCookie('XSRF-TOKEN');
     if (csrfToken && config.headers) {
         config.headers['X-XSRF-TOKEN'] = csrfToken;

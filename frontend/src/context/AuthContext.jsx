@@ -34,11 +34,13 @@ export const AuthProvider = ({ children }) => {
             } else {
                 setUser(null);
                 localStorage.removeItem('user');
+                localStorage.removeItem('token');
             }
         } catch (error) {
             console.error("Auth check failed:", error);
             setUser(null);
             localStorage.removeItem('user');
+            localStorage.removeItem('token');
         } finally {
             setLoading(false);
         }
@@ -48,14 +50,23 @@ export const AuthProvider = ({ children }) => {
         checkAuthStatus();
     }, []);
 
-    const login = (userData) => {
+    const login = (userData, token) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
+        if (token) {
+            localStorage.setItem('token', token);
+        }
     };
 
-    const logout = () => {
+    const logout = async () => {
+        try {
+            await api.post('/auth/logout');
+        } catch (e) {
+            console.error("Logout request failed:", e);
+        }
         setUser(null);
         localStorage.removeItem('user');
+        localStorage.removeItem('token');
     };
 
     return (

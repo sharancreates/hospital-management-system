@@ -144,6 +144,27 @@ def create_app(config_class=Config):
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
+
+    @login_manager.request_loader
+    def load_user_from_request(request):
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.replace('Bearer ', '', 1)
+            from itsdangerous import URLSafeTimedSerializer as Serializer, BadSignature, SignatureExpired
+            s = Serializer(app.config['SECRET_KEY'])
+            try:
+                data = s.loads(token, salt='auth-token-salt', max_age=86400)  # 1 day expiration
+                user_id = data.get('user_id')
+                if user_id:
+                    return User.query.get(int(user_id))
+            except (BadSignature, SignatureExpired):
+                pass
+        return None
+
+    @app.before_request
+    def exempt_api_headers_from_csrf():
+        if 'Authorization' in request.headers:
+            request.csrf_exempt = True
     
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')

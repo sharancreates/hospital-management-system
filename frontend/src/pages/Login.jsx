@@ -35,7 +35,8 @@ const Login = () => {
 
             if (response.data.status === 'success') {
                 const role = response.data.role;
-                login({ email: data.email, role });
+                const token = response.data.token;
+                login({ email: data.email, role }, token);
                 if (role === 'admin') navigate('/admin/dashboard');
                 else if (role === 'doctor') navigate('/doctor/dashboard');
                 else if (role === 'patient') navigate('/patient/dashboard');
