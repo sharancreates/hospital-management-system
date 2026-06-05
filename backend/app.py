@@ -157,6 +157,14 @@ def create_app(config_class=Config):
     if not app.config.get('TESTING') and os.environ.get('FLASK_ENV') != 'testing':
         from seed import auto_seed_database_if_empty
         try:
+            db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+            masked_uri = db_uri
+            if '@' in db_uri:
+                parts = db_uri.split('@')
+                prefix = parts[0].split(':')
+                if len(prefix) > 2:
+                    masked_uri = f"{prefix[0]}:{prefix[1]}:***@{parts[1]}"
+            app.logger.warning(f"Starting database initialization check with URI: {masked_uri}")
             auto_seed_database_if_empty(app)
         except Exception as e:
             app.logger.error(f"Error during auto-initialization/seeding: {str(e)}")
