@@ -63,8 +63,15 @@ def create_app(config_class=Config):
     socketio.init_app(app)
     
     # Configure strict CORS for production
+    import re
     raw_frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
     frontend_origins = []
+    
+    # Allow user's production domains and dynamic preview/branch Vercel URLs ending with -sharancreates.vercel.app
+    frontend_origins.append(re.compile(r"^https?://.*-sharancreates\.vercel\.app$"))
+    frontend_origins.append("https://arogya-hms-sharancreates.vercel.app")
+    frontend_origins.append("http://arogya-hms-sharancreates.vercel.app")
+    
     for origin in raw_frontend_url.split(','):
         cleaned = origin.strip().rstrip('/')
         if cleaned:
@@ -105,6 +112,9 @@ def create_app(config_class=Config):
 
     @app.after_request
     def set_csrf_cookie(response):
+        if request.method == 'OPTIONS':
+            return response
+            
         # Double-submit cookie pattern CSRF
         # Use dynamic secure flag from config
         secure_flag = app.config.get('SESSION_COOKIE_SECURE', False)
