@@ -61,6 +61,11 @@ def start_reminder_daemon(app):
                     res = check_and_send_appointment_reminders()
                     app.logger.info(f"Reminders check cycle ran: {res}")
             except Exception as e:
+                try:
+                    with app.app_context():
+                        db.session.rollback()
+                except Exception:
+                    pass
                 app.logger.error(f"Error in reminders daemon loop: {str(e)}")
             finally:
                 try:
