@@ -162,9 +162,9 @@ def create_app(config_class=Config):
         return None
 
     @app.before_request
-    def exempt_api_headers_from_csrf():
-        if request.path.startswith('/api/'):
-            request.csrf_exempt = True
+    def csrf_protect_non_api():
+        if not request.path.startswith('/api/'):
+            csrf.protect(apply_exemptions=True)
     
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')

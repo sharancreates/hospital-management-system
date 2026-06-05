@@ -17,6 +17,7 @@ class TestConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'test-secret-key'
     WTF_CSRF_ENABLED = False  # Disable CSRF in tests for ease of API invocation
+    WTF_CSRF_CHECK_DEFAULT = False
     SESSION_COOKIE_SECURE = False
     RATELIMIT_ENABLED = False
 

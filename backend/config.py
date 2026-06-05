@@ -30,6 +30,7 @@ class Config:
     
     # CSRF Headers for frontend API Double-Submit cookie pattern
     WTF_CSRF_ENABLED = True
+    WTF_CSRF_CHECK_DEFAULT = False
     WTF_CSRF_HEADERS = ['X-XSRF-TOKEN', 'X-CSRF-Token']
 
     # Mail settings
