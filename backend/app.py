@@ -61,8 +61,35 @@ def create_app(config_class=Config):
     socketio.init_app(app)
     
     # Configure strict CORS for production
-    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
-    cors.init_app(app, resources={r"/*": {"origins": frontend_url}}, supports_credentials=True)
+    raw_frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+    frontend_origins = []
+    for origin in raw_frontend_url.split(','):
+        cleaned = origin.strip().rstrip('/')
+        if cleaned:
+            frontend_origins.append(cleaned)
+            # If it has https, also allow http just in case, and vice versa
+            if cleaned.startswith("https://"):
+                frontend_origins.append(cleaned.replace("https://", "http://"))
+            elif cleaned.startswith("http://"):
+                frontend_origins.append(cleaned.replace("http://", "https://"))
+
+    # Always ensure localhost development origins are allowed
+    development_origins = [
+        "http://localhost:5173", "https://localhost:5173",
+        "http://127.0.0.1:5173", "https://127.0.0.1:5173",
+        "http://localhost:3000", "https://localhost:3000"
+    ]
+    for dev_origin in development_origins:
+        if dev_origin not in frontend_origins:
+            frontend_origins.append(dev_origin)
+
+    cors.init_app(app, resources={r"/*": {
+        "origins": frontend_origins,
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "X-CSRF-Token", "X-XSRF-TOKEN", "Authorization"],
+        "expose_headers": ["Content-Type", "X-CSRF-Token", "X-XSRF-TOKEN"],
+        "supports_credentials": True
+    }})
     
     csrf = CSRFProtect()
     csrf.init_app(app)
