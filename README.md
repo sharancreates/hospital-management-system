@@ -1,10 +1,8 @@
-<div align="center">
-
 # Arogya — Hospital Management System
 
-**A secure, full-stack Hospital Management System built with React and Flask, featuring healthcare interoperability through HL7 v2 and FHIR standards.**
+A secure, full-stack Hospital Management System built with React 19 and Flask, featuring healthcare interoperability through HL7 v2 and FHIR standards.
 
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)](https://react.dev/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://react.dev/)
 [![Flask](https://img.shields.io/badge/Flask-Python-000000?style=flat-square&logo=flask)](https://flask.palletsprojects.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)](https://redis.io/)
@@ -14,10 +12,8 @@
 
 [Live Demo](https://arogya-hms-sharancreates.vercel.app/) · [Report a Bug](https://github.com/sharancreates/hospital-management-system/issues) · [Request a Feature](https://github.com/sharancreates/hospital-management-system/issues)
 
-![Arogya HMS Dashboard Preview](<img width="1516" height="700" alt="image" src="https://github.com/user-attachments/assets/56a90b53-56cc-44db-ac25-2c8d8e1ddd6c" />
-)
-
-</div>
+Dashboard preview:
+<img width="1516" height="717" alt="image" src="https://github.com/user-attachments/assets/3020ff61-e728-4f5d-b80b-44f47fda0984" />
 
 ---
 
@@ -30,7 +26,7 @@
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
 - [Healthcare Interoperability](#healthcare-interoperability)
-- [Performance](#performance)
+- [Performance & Optimizations](#performance--optimizations)
 - [Security](#security)
 - [CI/CD](#cicd)
 - [Project Structure](#project-structure)
@@ -70,8 +66,8 @@ What sets Arogya apart from typical HMS projects is its **healthcare interoperab
 - HL7 and FHIR clinical data export controls
 
 ### Healthcare Interoperability
-- **HL7 v2 ADT** — generates A01 (Admit), A02 (Transfer), A03 (Discharge) segments
-- **FHIR R4** — exports Patient, Encounter, and Condition resources as compliant JSON
+- **HL7 v2 ADT** — generates A08 (Update) segments and formats clinical data with MSH/PID segments
+- **FHIR R4** — exports Patient resources as compliant JSON
 - Designed to integrate with external EHR platforms via standard messaging
 
 ---
@@ -79,32 +75,27 @@ What sets Arogya apart from typical HMS projects is its **healthcare interoperab
 ## Tech Stack
 
 ### Frontend
-| Technology | Purpose |
-|---|---|
-| React 18 (Vite) | SPA framework |
-| TailwindCSS | Utility-first styling |
-| React Router 6 | Client-side routing |
-| React Hook Form + Zod | Form management and schema validation |
-| React Context API | Global state management |
-| Socket.IO Client | Real-time updates |
+- **React 19 (Vite)**: SPA framework
+- **TailwindCSS**: Utility-first styling
+- **React Router 7**: Client-side routing
+- **React Hook Form + Zod**: Form management and schema validation
+- **React Context API**: Global state management
+- **Socket.IO Client**: Real-time updates
+- **Recharts**: Data visualization & analytics
 
 ### Backend
-| Technology | Purpose |
-|---|---|
-| Python + Flask | RESTful API server |
-| Flask-SQLAlchemy | ORM and database abstraction |
-| PostgreSQL | Primary production database |
-| SQLite | Development / test database |
-| Alembic | Database migration management |
-| Celery + Redis | Async background task processing |
-| Waitress / Gunicorn | WSGI production server |
+- **Python + Flask**: RESTful API server
+- **Flask-SQLAlchemy**: ORM and database abstraction
+- **PostgreSQL**: Primary production database
+- **SQLite**: Development / test database
+- **Alembic (Flask-Migrate)**: Database migration management
+- **Celery + Redis**: Async background task processing
+- **Waitress / Gunicorn**: WSGI production servers
 
 ### DevOps & Testing
-| Technology | Purpose |
-|---|---|
-| GitHub Actions | CI/CD pipeline |
-| pytest | Backend unit and integration tests |
-| Docker | Containerised local development |
+- **GitHub Actions**: CI/CD pipeline
+- **pytest**: Backend unit and integration tests
+- **Docker**: Containerised local development
 
 ---
 
@@ -128,7 +119,7 @@ What sets Arogya apart from typical HMS projects is its **healthcare interoperab
 │  ┌───────────────────────────────┐ │  R4 Generators  │  │
 │  │     Celery Workers + Redis    │ └─────────────────┘  │
 │  │  (Background task processing) │                      │
-│  └───────────────────────────────┘                      │
+│  └───────────────────────────────┐                      │
 └──────────────────────┬──────────────────────────────────┘
                        │
               ┌────────▼────────┐
@@ -143,8 +134,8 @@ What sets Arogya apart from typical HMS projects is its **healthcare interoperab
 ### Prerequisites
 
 - Node.js ≥ 18
-- Python ≥ 3.10
-- PostgreSQL ≥ 14
+- Python ≥ 3.11
+- PostgreSQL ≥ 15
 - Redis ≥ 7
 
 ### 1. Clone the repository
@@ -169,12 +160,10 @@ Run database migrations:
 flask db upgrade
 ```
 
-Start the Flask API:
+Start the Flask API production server:
 
 ```bash
-flask run
-# or for production:
-waitress-serve --port=5000 app:create_app()
+python run_prod.py
 ```
 
 ### 3. Start Celery worker
@@ -182,13 +171,13 @@ waitress-serve --port=5000 app:create_app()
 In a separate terminal (with venv activated):
 
 ```bash
-celery -A app.celery worker --loglevel=info
+celery -A celery_app.celery worker --loglevel=info
 ```
 
 ### 4. Set up the frontend
 
 ```bash
-cd frontend
+cd ../frontend
 npm install
 npm run dev
 ```
@@ -199,9 +188,9 @@ The application will be available at `http://localhost:5173`.
 
 | Role | Email | Password |
 |---|---|---|
-| Patient | patient@demo.com | demo1234 |
-| Doctor | doctor@demo.com | demo1234 |
-| Admin | admin@demo.com | demo1234 |
+| Patient | pat1@gmail.com | pat123 |
+| Doctor | doc1@arogya.com | doc123 |
+| Admin | admin@arogya.com | adminadmin123 |
 
 ---
 
@@ -211,23 +200,19 @@ Create a `.env` file in `/backend` using `.env.example` as a template:
 
 ```env
 # Flask
-FLASK_ENV=development
-SECRET_KEY=your-secret-key-here
+FLASK_ENV=production
+SECRET_KEY=your-secure-secret-key-here
 
 # Database
 DATABASE_URL=postgresql://user:password@localhost:5432/arogya_db
 
-# Redis / Celery
-CELERY_BROKER_URL=redis://localhost:6379/0
-CELERY_RESULT_BACKEND=redis://localhost:6379/0
-
-# JWT
-JWT_SECRET_KEY=your-jwt-secret-here
-JWT_ACCESS_TOKEN_EXPIRES=3600
+# Redis / Celery / Socket.IO
+REDIS_URL=redis://localhost:6379/0
 
 # Mail (for appointment reminders)
 MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=587
+MAIL_USE_TLS=true
 MAIL_USERNAME=your@email.com
 MAIL_PASSWORD=your-app-password
 ```
@@ -236,47 +221,30 @@ MAIL_PASSWORD=your-app-password
 
 ## Healthcare Interoperability
 
-Arogya implements two major healthcare data standards for clinical data exchange:
+Arogya implements major healthcare data standards for clinical data exchange:
 
-### HL7 v2 ADT Messages
-
-The export module generates ADT (Admit, Discharge, Transfer) messages conforming to HL7 v2.5 specifications. Example A01 (Admit) segment structure:
-
-```
-MSH|^~\&|AROGYA|FACILITY|EHR|DEST|20240101120000||ADT^A01|MSG001|P|2.5
-EVN|A01|20240101120000
-PID|1||P00123^^^AROGYA||Doe^John||19900101|M|||123 Main St^^City^ST^10001
-PV1|1|I|ICU^101^A|||DR001^Smith^Jane|||SUR|||||||||V001
-```
+### HL7 v2 Messages
+The export module generates valid `MSH` and `PID` segments conforming to HL7 v2 specifications for clinical updates.
 
 ### FHIR R4 Resources
+Clinical data is exportable as FHIR R4 JSON containing structured patient resource schemas.
 
-Clinical data is exportable as FHIR R4 JSON bundles containing Patient, Encounter, and Condition resources:
-
-```json
-{
-  "resourceType": "Patient",
-  "id": "P00123",
-  "name": [{ "family": "Doe", "given": ["John"] }],
-  "birthDate": "1990-01-01",
-  "gender": "male",
-  "address": [{ "line": ["123 Main St"], "city": "City", "postalCode": "10001" }]
-}
-```
-
-These exports allow Arogya to act as a data source for external EHR platforms, telemedicine systems, and health information exchanges (HIEs).
+These exports allow Arogya to interface with external EMR platforms, telemedicine systems, and health exchanges.
 
 ---
 
-## Performance
+## Performance & Optimizations
 
-One of the more interesting engineering challenges was the **appointment reminder dispatch latency**.
-
+### 1. Appointment Reminder Latency
 The initial implementation used Python's standard threading model to dispatch reminders. Under load, database session locking caused reminder jobs to queue behind each other, resulting in dispatch latencies of **up to 32 seconds**.
 
-**Solution:** Replaced the threading approach with Celery workers backed by Redis as the message broker. Each reminder job is now dispatched independently as an async task, fully decoupled from the request lifecycle.
+- **Solution**: Replaced the local threading approach with Celery workers backed by Redis as the message broker. Each reminder job is now dispatched independently as an async task, fully decoupled from the request lifecycle.
+- **Result**: Dispatch latency dropped from **32 seconds to 20 milliseconds** (~1,600× improvement).
 
-**Result: Dispatch latency dropped from 32 seconds → 20 milliseconds** — a ~1,600× improvement.
+### 2. Patient API N+1 Query Fix
+- **Problem**: Loading the patient dashboard initially ran separate lazy-load queries for every single appointment's doctor and treatment details, causing massive backend latency. Similarly, checking slot availability queried the database for every single individual slot.
+- **Solution**: Implemented eager loading (`joinedload`) for all relational models on the dashboard and consolidated availability checks into a single grouped query (`func.count` grouped by date/time).
+- **Result**: Reduced database roundtrips for availability checks from `O(N)` down to `O(1)`.
 
 ---
 
@@ -286,12 +254,12 @@ Arogya implements multiple layers of security appropriate for a healthcare platf
 
 | Layer | Implementation |
 |---|---|
-| Authentication | JWT tokens with expiry and refresh rotation |
+| Authentication | Token-based session authentication serialized via `itsdangerous` |
 | Authorisation | Role-based access control (RBAC) — Patient, Doctor, Admin |
 | CSRF Protection | Flask-WTF CSRF tokens on all state-changing requests |
 | API Rate Limiting | Flask-Limiter with per-endpoint and per-IP thresholds |
 | Session Security | Secure, HttpOnly, SameSite cookie flags |
-| Input Validation | Zod (frontend) + Marshmallow/Pydantic (backend) |
+| Input Validation | Zod (frontend) + built-in custom schemas (backend) |
 | Password Storage | bcrypt hashing with per-user salt |
 
 ---
@@ -299,20 +267,16 @@ Arogya implements multiple layers of security appropriate for a healthcare platf
 ## CI/CD
 
 GitHub Actions runs on every push and pull request to `main`:
-
-```yaml
-# .github/workflows/ci.yml
-- Lint: flake8 (Python), ESLint (JS)
-- Test: pytest with coverage report
-- Build: Vite production build check
-```
+- **Lint**: ESLint (JS)
+- **Test**: pytest with coverage report
+- **Build**: Vite production build check
 
 To run tests locally:
 
 ```bash
 # Backend
 cd backend
-pytest --cov=app tests/
+pytest backend/tests
 
 # Frontend
 cd frontend
@@ -328,38 +292,40 @@ npm run build
 hospital-management-system/
 ├── frontend/
 │   ├── src/
-│   │   ├── components/        # Shared UI components
-│   │   ├── pages/             # Route-level page components
-│   │   │   ├── patient/       # Patient dashboard views
-│   │   │   ├── doctor/        # Doctor dashboard views
-│   │   │   └── admin/         # Admin dashboard views
-│   │   ├── context/           # React Context providers
-│   │   ├── hooks/             # Custom React hooks
-│   │   ├── services/          # API call abstractions
-│   │   └── utils/             # Helpers and validators
-│   └── vite.config.js
+│   │   ├── components/        # Reusable UI components
+│   │   ├── pages/             # Page components
+│   │   │   └── admin/         # Sub-components/panels for the Admin dashboard
+│   │   ├── context/           # App state contexts (auth context)
+│   │   ├── App.jsx            # Main app router
+│   │   ├── api.ts             # Axios API client configuration
+│   │   ├── main.jsx           # App entrypoint
+│   │   └── index.css          # Global Tailwind styles
+│   └── package.json
 │
 ├── backend/
-│   ├── app/
-│   │   ├── models/            # SQLAlchemy ORM models
-│   │   ├── routes/            # Flask Blueprint routes
-│   │   │   ├── auth.py
-│   │   │   ├── appointments.py
-│   │   │   ├── inpatient.py
-│   │   │   ├── billing.py
-│   │   │   └── export.py      # HL7 + FHIR export endpoints
-│   │   ├── tasks/             # Celery background tasks
-│   │   ├── services/          # Business logic layer
-│   │   └── utils/
-│   │       ├── hl7_builder.py # HL7 v2 segment generator
-│   │       └── fhir_builder.py # FHIR R4 JSON builder
-│   ├── migrations/            # Alembic migration files
+│   ├── app.py                 # Flask app factory
+│   ├── config.py              # App configuration
+│   ├── extensions.py          # Extension instances (db, socketio, cors, etc.)
+│   ├── models.py              # SQLAlchemy DB models
+│   ├── celery_app.py          # Celery configuration
+│   ├── requirements.txt
+│   ├── routes/                # Blueprint routes
+│   │   ├── admin_routes.py
+│   │   ├── auth_routes.py
+│   │   ├── doctor_routes.py
+│   │   ├── enterprise_routes.py
+│   │   ├── health_routes.py
+│   │   ├── patient_routes.py
+│   │   └── utils.py
+│   ├── services/              # Core business services
+│   │   ├── admin_service.py
+│   │   ├── audit_service.py
+│   │   ├── doctor_service.py
+│   │   ├── enterprise_service.py # Generates HL7 v2 and FHIR R4
+│   │   ├── patient_service.py
+│   │   └── reminders.py       # Dispatches reminders (Celery task & thread fallback)
 │   ├── tests/                 # pytest test suite
-│   └── requirements.txt
-│
-└── .github/
-    └── workflows/
-        └── ci.yml
+│   └── run_prod.py            # Waitress production script
 ```
 
 ---
@@ -379,5 +345,3 @@ Contributions are welcome. Please open an issue first to discuss what you'd like
 Built by [Sharanya Nagar](https://sharanyanagar.vercel.app/) · [LinkedIn](https://linkedin.com/in/sharanya-nagar)
 
 *If this project helped you, a ⭐ on GitHub goes a long way.*
-
-</div>
