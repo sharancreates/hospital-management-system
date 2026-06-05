@@ -186,6 +186,8 @@ def auto_seed_database_if_empty(app):
     from models import User, Doctor, Patient, Department, Appointment, Treatment, Availability
     with app.app_context():
         try:
+            # Clear any pre-existing aborted transaction from the connection pool
+            db.session.rollback()
             db.create_all()
             if User.query.first() is not None:
                 app.logger.warning("Database already initialized and contains data. Skipping auto-seed.")

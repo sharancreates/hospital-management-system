@@ -126,11 +126,6 @@ def create_app(config_class=Config):
 
     register_bp(app)
 
-    # Initialize upcoming appointment reminders background scheduler
-    if not app.config.get('TESTING') and os.environ.get('FLASK_ENV') != 'testing' and os.environ.get('NO_DAEMON') != '1':
-        from services.reminders import start_reminder_daemon
-        start_reminder_daemon(app)
-
     # Auto-initialize and auto-seed database if empty on startup
     if not app.config.get('TESTING') and os.environ.get('FLASK_ENV') != 'testing':
         from seed import auto_seed_database_if_empty
@@ -138,6 +133,11 @@ def create_app(config_class=Config):
             auto_seed_database_if_empty(app)
         except Exception as e:
             app.logger.error(f"Error during auto-initialization/seeding: {str(e)}")
+
+    # Initialize upcoming appointment reminders background scheduler
+    if not app.config.get('TESTING') and os.environ.get('FLASK_ENV') != 'testing' and os.environ.get('NO_DAEMON') != '1':
+        from services.reminders import start_reminder_daemon
+        start_reminder_daemon(app)
 
     return app
 
