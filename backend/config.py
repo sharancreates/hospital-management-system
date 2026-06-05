@@ -9,6 +9,10 @@ class Config:
     SQLALCHEMY_DATABASE_URI = database_url
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key-please-change'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 280
+    }
     
     # Production Cookie Security
     SESSION_COOKIE_SECURE = os.environ.get('FLASK_ENV') == 'production'
