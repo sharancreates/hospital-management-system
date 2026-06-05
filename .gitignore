@@ -3,6 +3,10 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+*.md 
+
+venv
+
 #env
 .env
 __pycache__/

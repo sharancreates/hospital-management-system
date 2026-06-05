@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: arogya_hms_db
+    environment:
+      - POSTGRES_DB=arogya
+      - POSTGRES_USER=arogya_admin
+      - POSTGRES_PASSWORD=arogya_secure_pass_123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: arogya-hms:latest
+    container_name: arogya_hms_web
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=arogya-prod-sec-key-replace-this-in-deployment
+      - DATABASE_URL=postgresql://arogya_admin:arogya_secure_pass_123@db:5432/arogya
+      - ADMIN_EMAIL=admin@arogya.com
+      - ADMIN_PASSWORD=admin123
+    depends_on:
+      - db
+    volumes:
+      - arogya_data:/app/backend/instance
+    restart: unless-stopped
+
+volumes:
+  arogya_data:
+    driver: local
+  pgdata:
+    driver: local
