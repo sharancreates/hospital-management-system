@@ -14,7 +14,10 @@ import {
     HardDrive, 
     Download, 
     FileJson,
-    ChevronRight
+    ChevronRight,
+    FileText,
+    Heart,
+    X
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api';
@@ -28,6 +31,58 @@ const Home = () => {
         system_status: 'Checking...',
         queue_delay: null
     });
+    const [activeDocument, setActiveDocument] = useState(null);
+
+    const docData = {
+        privacy: {
+            title: "Privacy Policy",
+            icon: <Shield className="w-8 h-8 text-amber-500" />,
+            content: (
+                <div className="space-y-4 text-[#a0a09e] text-sm leading-relaxed">
+                    <p className="border-b border-[#40403d] pb-2"><strong>Last Updated: June 5, 2026</strong></p>
+                    <p>Welcome to Arogya Medical Center. We are dedicated to maintaining the privacy and security of your Protected Health Information (PHI) in accordance with global clinical record-keeping standards.</p>
+                    <h3 className="font-semibold text-base mt-4 text-[#FDFCF8]">1. Information We Collect</h3>
+                    <p>We collect and store patient identification data (names, contact numbers, email addresses), demographic metrics (Date of Birth, gender), appointment slots, diagnoses, prescription records, and payment/insurance details.</p>
+                    <h3 className="font-semibold text-base mt-4 text-[#FDFCF8]">2. Use of Medical Records</h3>
+                    <p>Your PHI is accessed exclusively to coordinate clinical treatments, process billing invoices, issue digital prescriptions, and compute system live status stats (e.g., lobby queue lengths). We do not share your details with marketing or third-party organizations.</p>
+                    <h3 className="font-semibold text-base mt-4 text-[#FDFCF8]">3. Data Protection Practices</h3>
+                    <p>All sessions and API actions are protected using double-submit CSRF tokens and role-based route access layers. Passwords are securely hashed using cryptographic salts, and clinical transactions are recorded in encrypted system audit logs.</p>
+                </div>
+            )
+        },
+        terms: {
+            title: "Terms of Service",
+            icon: <FileText className="w-8 h-8 text-blue-500" />,
+            content: (
+                <div className="space-y-4 text-[#a0a09e] text-sm leading-relaxed">
+                    <p className="border-b border-[#40403d] pb-2"><strong>Last Updated: June 5, 2026</strong></p>
+                    <p>By registering or using the Arogya HMS portals, you agree to comply with and be bound by the following Terms of Service.</p>
+                    <h3 className="font-semibold text-base mt-4 text-[#FDFCF8]">1. User Registrations & Accounts</h3>
+                    <p>You must provide accurate, complete, and current details during registration. You are solely responsible for maintaining the confidentiality of your account credentials. You must immediately notify administration of any suspected security breach.</p>
+                    <h3 className="font-semibold text-base mt-4 text-[#FDFCF8]">2. Purpose of Portal</h3>
+                    <p>The Arogya patient portal is designed for administrative booking, prescription downloads, and inpatient tracking. <strong className="text-amber-400">This portal is not monitored for critical clinical emergencies. If you are experiencing a life-threatening medical emergency, call emergency services or visit the nearest emergency room immediately.</strong></p>
+                    <h3 className="font-semibold text-base mt-4 text-[#FDFCF8]">3. System Restraints</h3>
+                    <p>Any attempt to scan for vulnerabilities, run denial-of-service (DoS) scripts, upload malicious packages, or bypass API CSRF protection is strictly prohibited and will result in permanent account termination and legal reporting.</p>
+                </div>
+            )
+        },
+        rights: {
+            title: "Patient Rights",
+            icon: <Heart className="w-8 h-8 text-rose-500" />,
+            content: (
+                <div className="space-y-4 text-[#a0a09e] text-sm leading-relaxed">
+                    <p className="border-b border-[#40403d] pb-2"><strong>Last Updated: June 5, 2026</strong></p>
+                    <p>As a patient of Arogya Medical Center, you possess fundamental rights regarding your medical treatment, choice of providers, and data access.</p>
+                    <h3 className="font-semibold text-base mt-4 text-[#FDFCF8]">1. Right to Access & Records</h3>
+                    <p>You have the right to request, view, and download copies of your Electronic Health Records (EHR) and prescriptions at any time. This clinical data is exportable in standard FHIR JSON and HL7 formats.</p>
+                    <h3 className="font-semibold text-base mt-4 text-[#FDFCF8]">2. Respect & Dignity</h3>
+                    <p>You have the right to receive respectful, compassionate, and non-discriminatory care from all medical officers, nurses, and administrative staff, regardless of your insurance provider or clinical condition.</p>
+                    <h3 className="font-semibold text-base mt-4 text-[#FDFCF8]">3. Billing Disclosure</h3>
+                    <p>You have the right to a clear, detailed explanation of all clinical services, diagnostic lab orders, pharmacy items, and coverage limits computed on your billing invoices.</p>
+                </div>
+            )
+        }
+    };
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -338,29 +393,61 @@ const Home = () => {
                     <div>
                         <h4 className="text-sm font-medium text-[#FDFCF8] mb-4">Contact</h4>
                         <ul className="space-y-2 text-sm text-[#a0a09e]">
-                            <li>Emergency Hotline: 911</li>
-                            <li>Phone: (555) 123-4567</li>
-                            <li>Support: support@arogya.com</li>
+                            <li>+91 1234567859</li>
+                            <li>sharanyanagar@yahoo.in</li>
                         </ul>
                     </div>
                     <div>
                         <h4 className="text-sm font-medium text-[#FDFCF8] mb-4">Location</h4>
                         <ul className="space-y-2 text-sm text-[#a0a09e]">
-                            <li>100 Healthcare Blvd.</li>
-                            <li>Clinical District</li>
-                            <li>New York, NY 10001</li>
+                            <li>Sharanya Nagar</li>
                         </ul>
                     </div>
                 </div>
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-[#a0a09e] pt-8 border-t border-[#40403d] dark:border-[#222220]">
                     <p>© 2026 Arogya Medical Center. All rights reserved.</p>
                     <div className="flex gap-4 mt-4 md:mt-0">
-                        <span className="hover:text-[#FDFCF8] cursor-pointer transition-colors">Privacy Policy</span>
-                        <span className="hover:text-[#FDFCF8] cursor-pointer transition-colors">Terms of Service</span>
-                        <span className="hover:text-[#FDFCF8] cursor-pointer transition-colors">Patient Rights</span>
+                        <span onClick={() => setActiveDocument('privacy')} className="hover:text-[#FDFCF8] cursor-pointer transition-colors">Privacy Policy</span>
+                        <span onClick={() => setActiveDocument('terms')} className="hover:text-[#FDFCF8] cursor-pointer transition-colors">Terms of Service</span>
+                        <span onClick={() => setActiveDocument('rights')} className="hover:text-[#FDFCF8] cursor-pointer transition-colors">Patient Rights</span>
                     </div>
                 </div>
             </footer>
+
+            {/* Document Modal */}
+            {activeDocument && docData[activeDocument] && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a0a09]/80 backdrop-blur-sm transition-opacity">
+                    <div className="bg-[#2a2a29] border border-[#40403d] rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl relative flex flex-col transition-all transform scale-100">
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between p-6 border-b border-[#40403d] bg-[#222221] rounded-t-2xl">
+                            <div className="flex items-center gap-3">
+                                {docData[activeDocument].icon}
+                                <h2 className="text-xl font-bold text-[#FDFCF8]">{docData[activeDocument].title}</h2>
+                            </div>
+                            <button 
+                                onClick={() => setActiveDocument(null)}
+                                className="p-2 text-[#a0a09e] hover:text-[#FDFCF8] hover:bg-[#343432] rounded-lg transition-all"
+                                aria-label="Close modal"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        {/* Modal Content */}
+                        <div className="p-6 overflow-y-auto text-[#a0a09e] max-h-[60vh]">
+                            {docData[activeDocument].content}
+                        </div>
+                        {/* Modal Footer */}
+                        <div className="flex justify-end p-4 border-t border-[#40403d] bg-[#222221] rounded-b-2xl">
+                            <button 
+                                onClick={() => setActiveDocument(null)}
+                                className="px-5 py-2 text-sm font-medium text-[#2d2d2a] bg-[#FDFCF8] hover:bg-[#f6f4ed] rounded-lg transition-all shadow-md"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
         </div>
     );
