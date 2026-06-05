@@ -15,9 +15,15 @@ class Config:
     }
     
     # Production Cookie Security
-    SESSION_COOKIE_SECURE = os.environ.get('FLASK_ENV') == 'production'
+    _is_prod = (
+        os.environ.get('FLASK_ENV') == 'production' or 
+        'onrender.com' in database_url or
+        'neon.tech' in database_url or
+        'supabase' in database_url
+    )
+    SESSION_COOKIE_SECURE = _is_prod
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = os.environ.get('SESSION_COOKIE_SAMESITE') or 'Lax'
+    SESSION_COOKIE_SAMESITE = os.environ.get('SESSION_COOKIE_SAMESITE') or ('None' if _is_prod else 'Lax')
     
     # Request constraints
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB limit
