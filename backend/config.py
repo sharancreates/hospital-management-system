@@ -21,6 +21,9 @@ class Config:
         'neon.tech' in database_url or
         'supabase' in database_url
     )
+    if _is_prod and SECRET_KEY == 'dev-key-please-change':
+        raise ValueError("CRITICAL: Production deployments require a secure, environment-defined SECRET_KEY.")
+        
     SESSION_COOKIE_SECURE = _is_prod
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = os.environ.get('SESSION_COOKIE_SAMESITE') or ('None' if _is_prod else 'Lax')

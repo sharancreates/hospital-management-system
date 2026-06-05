@@ -146,7 +146,7 @@ class Bed(db.Model):
     bed_id = db.Column(db.Integer, primary_key=True)
     ward_id = db.Column(db.Integer, db.ForeignKey('ward.ward_id'), nullable=False)
     bed_number = db.Column(db.String(20), nullable=False)
-    status = db.Column(db.String(20), default='Available', nullable=False)
+    status = db.Column(db.String(20), default='Available', nullable=False, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 

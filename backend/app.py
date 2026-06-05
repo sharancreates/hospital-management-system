@@ -135,6 +135,38 @@ def create_app(config_class=Config):
         app.logger.warning(f"CSRF validation failed: {e.description}")
         return jsonify({"message": f"CSRF error: {e.description}", "status": "error"}), 400
 
+    @app.errorhandler(400)
+    def bad_request_error(error):
+        return jsonify({"message": str(error.description) if hasattr(error, 'description') else "Bad request", "status": "error"}), 400
+
+    @app.errorhandler(403)
+    def forbidden_error(error):
+        return jsonify({"message": "Forbidden access", "status": "error"}), 403
+
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return jsonify({"message": "Resource not found", "status": "error"}), 404
+
+    @app.errorhandler(405)
+    def method_not_allowed_error(error):
+        return jsonify({"message": "Method not allowed", "status": "error"}), 405
+
+    @app.errorhandler(429)
+    def ratelimit_handler(e):
+        return jsonify({"message": "Too many requests. Please try again later.", "status": "error"}), 429
+
+    @app.errorhandler(Exception)
+    def handle_unexpected_error(error):
+        # Prevent double logging of standard errors if necessary, but log unexpected ones
+        app.logger.error(f"Unhandled Exception: {str(error)}", exc_info=True)
+        response = {
+            "message": "An unexpected error occurred. Please contact system administrator.",
+            "status": "error"
+        }
+        if app.config.get('DEBUG') or app.config.get('TESTING'):
+            response["details"] = str(error)
+        return jsonify(response), 500
+
     login_manager = LoginManager()
     login_manager.init_app(app)
     @login_manager.unauthorized_handler

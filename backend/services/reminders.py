@@ -2,6 +2,27 @@ from datetime import datetime, date, timedelta
 from extensions import db
 from models import Appointment, Patient, Doctor
 from flask import current_app
+import os
+from celery import shared_task
+
+@shared_task(name="services.reminders.send_appointment_reminders_task")
+def send_appointment_reminders_task():
+    """
+    Celery task that runs inside the Flask app context.
+    """
+    from app import create_app
+    app = create_app()
+    with app.app_context():
+        try:
+            res = check_and_send_appointment_reminders()
+            app.logger.info(f"Celery Reminders check cycle ran: {res}")
+            return res
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Error in Celery reminders task: {str(e)}")
+            raise e
+        finally:
+            db.session.remove()
 
 def check_and_send_appointment_reminders():
     """
@@ -49,7 +70,12 @@ def check_and_send_appointment_reminders():
 def start_reminder_daemon(app):
     """
     Optionally run daemon thread in background to dispatch reminders periodically
+    if Celery/Redis task queues are not configured.
     """
+    if os.environ.get('CELERY_ENABLED') == '1' or os.environ.get('REDIS_URL'):
+        app.logger.info("Celery and/or Redis is enabled. Skipping background thread reminder daemon.")
+        return
+        
     import threading
     import time
     
