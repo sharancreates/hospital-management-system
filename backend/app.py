@@ -20,15 +20,17 @@ from logging.handlers import RotatingFileHandler
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
-    cursor = dbapi_connection.cursor()
-    try:
-        cursor.execute("PRAGMA journal_mode=WAL")
-        cursor.execute("PRAGMA synchronous=NORMAL")
-        cursor.execute("PRAGMA busy_timeout = 30000")
-    except Exception:
-        pass
-    finally:
-        cursor.close()
+    # Only run SQLite PRAGMA commands on SQLite connections
+    if 'sqlite' in type(dbapi_connection).__module__.lower():
+        cursor = dbapi_connection.cursor()
+        try:
+            cursor.execute("PRAGMA journal_mode=WAL")
+            cursor.execute("PRAGMA synchronous=NORMAL")
+            cursor.execute("PRAGMA busy_timeout = 30000")
+        except Exception:
+            pass
+        finally:
+            cursor.close()
 
 @event.listens_for(Engine, "begin")
 def do_begin(conn):
